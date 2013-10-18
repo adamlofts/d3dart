@@ -3,9 +3,36 @@ library D3Dart;
 
 import 'dart:html';
 import 'dart:math' as Math;
+import 'dart:collection';
 
 typedef String PropertyFunction(dynamic d, int i);
 typedef Object KeyFunction(dynamic d, int i);
+typedef EachFunction(Element elmt, dynamic d, int i, [int j]);
+
+class _Group extends ListMixin<Element> {
+  Element parentNode;
+  List<Element> _list = [];
+  
+  _Group() {
+    
+  }
+  
+  Element operator [](int index) {
+    return _list[index];
+  }
+
+  void operator []=(int index, Element value) {
+    _list[index] = value;
+  }
+
+  int get length {
+    return _list.length;
+  }
+  
+  void set length(int newLength) {
+    _list.length = newLength;
+  }
+}
 
 class Selection {
   
@@ -13,25 +40,29 @@ class Selection {
 
   Selection _parent;
   
-  List<Element> _elements;
+  List<_Group> _groups;
   Iterable<Object> _data = [];
   
-  Selection(Selection this._parent, List<Element> this._elements);
+  Selection(Selection this._parent, List<List<Element>> this._groups);
   
   int get length {
-    return _elements.length;
+    return _groups.length;
   }
   
-  void set text(PropertyFunction f) {
-    int index = 0;
-    Iterator<Object> data_it = _data.iterator;
-    for (Element elmt in _elements) {
-      data_it.moveNext();
-      Object d = data_it.current;
-      dynamic v = f(d, index);
-      elmt.text = v;
-      index += 1;
+  /*
+  String get text {
+    Element elmt = node;
+    if (elmt != null) {
+      return elmt.text;
     }
+    return '';
+  }
+  */
+  
+  void set text(PropertyFunction f) {
+    each((Element elmt, dynamic d, int i, [int j]) {
+      elmt.text = f(d, i);
+    });
   }
   
   _SelectionStyle get style => new _SelectionStyle(this);
@@ -39,7 +70,7 @@ class Selection {
   void attr(String name, PropertyFunction f) {
     int index = 0;
     Iterator<Object> data_it = _data.iterator;
-    for (Element elmt in _elements) {
+    for (Element elmt in _groups) {
       data_it.moveNext();
       Object d = data_it.current;
       dynamic v = f(d, index);
@@ -49,54 +80,106 @@ class Selection {
   }
   
   Selection select(String selector) {
-    /*for (List<Element> group in )
-    var subgroups = [],
-        subgroup,
-        subnode,
-        group,
-        node;
-
-    selector = d3_selection_selector(selector);
-
-    for (var j = -1, m = this.length; ++j < m;) {
-      subgroups.push(subgroup = []);
-      subgroup.parentNode = (group = this[j]).parentNode;
-      for (var i = -1, n = group.length; ++i < n;) {
-        if (node = group[i]) {
-          subgroup.push(subnode = selector.call(node, node.__data__, i, j));
-          if (subnode && "__data__" in node) subnode.__data__ = node.__data__;
-        } else {
-          subgroup.push(null);
+    return selectFunc((Element elmt, dynamic d, int i, [int j]) => elmt.query(selector));
+  }
+  
+  Selection selectFunc(EachFunction f) {
+    int j = 0;
+    List<_Group> subgroups = _groups.map((_Group group) {
+      _Group subgroup = new _Group();
+      subgroup.parentNode = group.parentNode;
+      int i = 0;
+      for (Element elmt in group) {
+        Element subelmt;
+        if (elmt != null) {
+          subelmt = f(node, _datum[node], i, j);
+          if (subelmt != null) {
+            _datum[subelmt] = _datum[elmt];
+          }
         }
+        subgroup.add(subelmt);
+        i += 1;
       }
-    }
-
-    return d3_selection(subgroups);
-    */
+      j += 1;
+    }).toList();
+    return new Selection(null, subgroups);
   }
   
   Selection selectAll(String selector) {
-    return new Selection(this, _elements.map((Element elmt) => elmt.queryAll(selector)).reduce((Iterable a, Iterable b) {
-      List list = a.toList();
-      list.addAll(b);
-      return list;
-    }));
+    
+    List<_Group> subgroups = [];
+    int j = 0;
+    for (_Group group in _groups) {
+      int i = 0;
+      for (Element elmt in group) {
+        if (elmt != null) {
+          _Group subgroup = new _Group();
+          subgroup.parentNode = elmt;
+          subgroup.addAll(elmt.queryAll(selector)); // subgroups.push(subgroup = d3_array(selector.call(node, node.__data__, i, j)));
+          subgroups.add(subgroup);
+        }
+        i += 1;
+      }
+      j += 1;
+    }
+    return new Selection(null, subgroups);
   }
 
   BoundSelection data(Iterable<Object> value, { KeyFunction key: null }) {
-    return new BoundSelection(_parent, _elements, value, key);
+    return new BoundSelection(_parent, _groups, value, key);
   }
   
+  /**
+   * Gets or sets the bound data for each selected element.
+   * 
+   * Unlike the selection.data method, this method does not compute a join (and thus does not compute enter and exit selections). 
+   */
   Object get datum {
-    if (_elements.isEmpty) {
-      return null;
+    Element elmt = node;
+    if (elmt != null) {
+      return _datum[elmt];
     }
-    return _datum[_elements.first];
+    return null;
   }
   
   void set datum(Object value) {
-    for (Element elmt in _elements) {
+    this.each((Element elmt, dynamic d, int i, [int j]) {
       _datum[elmt] = value;
+    });
+  }
+  
+  /**
+   * Returns the first non-null element in the current selection. If the selection is empty, returns null.
+   */
+  Element get node {
+    for (_Group group in _groups) {
+      for (Element elmt in group) {
+        if (elmt != null) {
+          return elmt;
+        }
+      }
+    }
+    return null;
+  }
+  
+  /**
+   * Invokes the specified function for each element in the current selection, passing in the current datum d and index i,
+   * with the this context of the current DOM element. This operator is used internally by nearly every other operator,
+   * and can be used to invoke arbitrary code for each selected element.
+   * 
+   * The each operator can be used to process selections recursively, by using d3.select(this) within the callback function.
+   */
+  void each(EachFunction f) {
+    int j = 0;
+    for (_Group group in _groups) {
+      int i = 0;
+      for (Element elmt in group) {
+        if (elmt != null) {
+          f(elmt, _datum[elmt], i, j);
+        }
+        i += 1;
+      }
+      j += 1;
     }
   }
 }
@@ -106,13 +189,12 @@ class EnterSelection extends Selection {
     this._data = _data;
   }
 
-  void append(String tag) {
-    for (Object d in _data) {
-      Element elmt = new Element.tag(tag);
-      _elements.add(elmt);
-      // FIXME: .first ???
-      _parent._elements.first.append(elmt);
-    }
+  Selection append(String tag) {
+    EachFunction f = (Element elmt, dynamic d, int i, [int j]) {
+      Element child = new Element.tag(tag);
+      elmt.append(child);
+    };
+    return this.selectFunc(f);
   }
 }
 
@@ -122,9 +204,9 @@ class BoundSelection extends Selection {
   Map<Object, Element> _bound;
   int _taken;
   
-  BoundSelection(Selection parent, List<Element> elements, Iterable<Object> this._all_data, KeyFunction this._key) : super(parent, []) {
-    _taken = Math.min(elements.length, _data.length);
-    this._elements.addAll(elements.take(_taken));
+  BoundSelection(Selection parent, List<_Group> groups, Iterable<Object> this._all_data, KeyFunction this._key) : super(parent, []) {
+    _taken = Math.min(groups.length, _data.length);
+    this._groups.addAll(groups.take(_taken));
     this._data = _all_data.take(_taken);
   }
   
@@ -140,15 +222,18 @@ class BoundSelection extends Selection {
 }
 
 Selection select(String selector) {
+  _Group group = new _Group();
   Element elmt = query(selector);
   if (elmt != null) {
-    return new Selection(null, [elmt]);
+    group.add(elmt);
   }
-  return new Selection(null, []);
+  return new Selection(null, [group]);
 }
 
 Selection selectAll(String selector) {
-  return new Selection(null, queryAll(selector));
+  _Group group = new _Group();
+  group.addAll(queryAll(selector));
+  return new Selection(null, [group]);
 }
 
 class _SelectionStyle {
@@ -158,7 +243,7 @@ class _SelectionStyle {
   void setProperty(String propertyName, PropertyFunction f) {
     int index = 0;
     Iterator<Object> data_it = _selection._data.iterator;
-    for (Element elmt in _selection._elements) {
+    for (Element elmt in _selection._groups) {
       data_it.moveNext();
       Object d = data_it.current;
       dynamic v = f(d, index);
