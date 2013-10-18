@@ -8,6 +8,9 @@ typedef String PropertyFunction(dynamic d, int i);
 typedef Object KeyFunction(dynamic d, int i);
 
 class Selection {
+  
+  static Expando _datum = new Expando("__data__");
+
   Selection _parent;
   
   List<Element> _elements;
@@ -52,6 +55,19 @@ class Selection {
   BoundSelection data(Iterable<Object> value, { KeyFunction key: null }) {
     return new BoundSelection(_parent, _elements, value, key);
   }
+  
+  Object get datum {
+    if (_elements.isEmpty) {
+      return null;
+    }
+    return _datum[_elements.first];
+  }
+  
+  void set datum(Object value) {
+    for (Element elmt in _elements) {
+      _datum[elmt] = value;
+    }
+  }
 }
 
 class EnterSelection extends Selection {
@@ -93,7 +109,11 @@ class BoundSelection extends Selection {
 }
 
 Selection select(String selector) {
-  return new Selection(null, [query(selector)]);
+  Element elmt = query(selector);
+  if (elmt != null) {
+    return new Selection(null, [elmt]);
+  }
+  return new Selection(null, []);
 }
 
 Selection selectAll(String selector) {

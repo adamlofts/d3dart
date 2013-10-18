@@ -8,6 +8,19 @@ import '../lib/D3Dart.dart';
 void main() {
   Element $test = query("#test");
   
+  test('Datum', () {
+    Selection sel = select("#test");
+    sel.datum = 1;
+    expect(sel.datum, equals(1));
+    
+    Selection sel2 = select("#test");
+    expect(sel.datum, equals(1));
+    
+    Selection empty = select("#doesnotexist");
+    empty.datum = 25;
+    expect(empty.datum, equals(null));
+  });
+
   test('Selection', () {
     Selection test = select("#test");
     test.text = (a,b) => "Hello";
