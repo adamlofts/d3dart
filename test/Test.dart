@@ -22,6 +22,11 @@ void main() {
   });
 
   test('Selection', () {
+    
+    Selection sel = select("body");
+    //Selection sel2 = sel.select("#doesnotexist");
+    //expect(sel2.length, 1); // Empty group
+    
     Selection test = select("#test");
     test.text = (a,b) => "Hello";
     expect($test.text, equals("Hello"));
@@ -32,8 +37,8 @@ void main() {
     $test.append(p1);
     $test.append(p2);
     
-    Selection sub = test.selectAll("p");
-    sub.text = (a,b) => "Bye";
+    sel = test.selectAll("p");
+    sel.text = (a,b) => "Bye";
     expect($test.children.first.text, equals("Bye"));
   });
   
