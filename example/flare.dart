@@ -5,32 +5,71 @@ import 'package:d3dart/D3Dart.dart' as d3;
 
 void main() {
   
-  //d3.selectAll("p").style.color = (d,i) => (i % 2 == 0) ? "#f00" : "#0ff";
-  //d3.select("body").style.backgroundColor = (d,i) => ("black");
-  //d3.Selection selection = d3.select("body").selectAll("p");
-  //selection.data([4, 8, 15, 16, 23, 42]).style.fontSize = (d, i) => "${d}px";
+  num width = 960,
+      height = 700,
+      radius = Math.min(width, height) / 2;
+  Function color = d3.Scale.category20c;
   
-  //d3.EnterSelection esel = selection.enter();
-  //esel.append("p");
-  //esel.text = (d, i) => "d=${d} i=${i}";
+  d3.Selection svg = d3.select("body").append("svg")
+    ..attr("width", width)
+    ..attr("height", height)
+    ..append("g")
+    .attr("transform", "translate(${width / 2},${height * .52})");
   
-  //var circle = svg.selectAll("circle");
+  /*
+
+var partition = d3.layout.partition()
+    .sort(null)
+    .size([2 * Math.PI, radius * radius])
+    .value(function(d) { return 1; });
   
-  query("button").onClick.listen(go);
+var arc = d3.svg.arc()
+    .startAngle(function(d) { return d.x; })
+    .endAngle(function(d) { return d.x + d.dx; })
+    .innerRadius(function(d) { return Math.sqrt(d.y); })
+    .outerRadius(function(d) { return Math.sqrt(d.y + d.dy); });
+
+d3.json("flare.json", function(error, root) {
+  var path = svg.datum(root).selectAll("path")
+      .data(partition.nodes)
+    .enter().append("path")
+      .attr("display", function(d) { return d.depth ? null : "none"; }) // hide inner ring
+      .attr("d", arc)
+      .style("stroke", "#fff")
+      .style("fill", function(d) { return color((d.children ? d : d.parent).name); })
+      .style("fill-rule", "evenodd")
+      .each(stash);
+
+  d3.selectAll("input").on("change", function change() {
+    var value = this.value === "count"
+        ? function() { return 1; }
+        : function(d) { return d.size; };
+
+    path
+        .data(partition.value(value).nodes)
+      .transition()
+        .duration(1500)
+        .attrTween("d", arcTween);
+  });
+});
+
+// Stash the old values for transition.
+function stash(d) {
+  d.x0 = d.x;
+  d.dx0 = d.dx;
 }
 
-void go(_) {
-  d3.Selection svg = d3.select("svg");
-  d3.Selection circle = svg.selectAll("circle");
-  
-  d3.BoundSelection bound = circle.data([57, 32, 112, 293]);
-  d3.Selection enter = bound.enter;
-  enter.append("circle");
-  var rng = new Math.Random();
-  enter.attrFunc("cy", (d,i) => "${rng.nextInt(200)}");
-  enter.attrFunc("cx", (d,i) => "${rng.nextInt(200)}");
-  enter.attrFunc("r", (d, i) {
-    return "${Math.sqrt(d)}";
-  });
-  enter.style.backgroundColor = (d,i) => "red";
+// Interpolate the arcs in data space.
+function arcTween(a) {
+  var i = d3.interpolate({x: a.x0, dx: a.dx0}, a);
+  return function(t) {
+    var b = i(t);
+    a.x0 = b.x;
+    a.dx0 = b.dx;
+    return arc(b);
+  };
+}
+
+d3.select(self.frameElement).style("height", height + "px");
+*/
 }
