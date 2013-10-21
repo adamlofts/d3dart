@@ -12,10 +12,10 @@ part 'Layout.dart';
 part 'CSV.dart';
 part 'SVG.dart';
 
-const num TWO_PI = Math.PI * 2;
-const num HALF_PI = Math.PI / 2;
-const num EPSILON = 1e-6;
-const num EPSILON_SQD = EPSILON * EPSILON;
+const num TWO_PI = Math.PI * 2; // τ in d3
+const num HALF_PI = Math.PI / 2; // halfπ in d3
+const num EPSILON = 1e-6; // ε in d3
+const num EPSILON_SQD = EPSILON * EPSILON; // ε2 in d3
 
 typedef String PropertyFunction(dynamic d, int i);
 typedef Object KeyFunction(dynamic d, int i);

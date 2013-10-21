@@ -12,7 +12,7 @@ void main() {
   
   d3.Arc arc = new d3.Arc();
   arc.outerRadius = radius - 10;
-  arc.innerRadius = radius - 70;
+  arc.innerRadius = 0;
   
   d3.Selection svg = d3.select("body").append("svg")
     ..attr("width", width)
@@ -23,7 +23,6 @@ void main() {
   
   var pie = d3.Layout.pie([]);
   pie.value = (Map d) => d["population"];
-  //pie.endAngle = Math.PI;
   
   d3.csv("pie.csv").then((List data) {
     data.forEach((Map d) {

@@ -4,8 +4,8 @@ part of D3Dart;
 typedef num ArcFunction(Object d, int i);
 
 class Arc {
-  static const num _arcOffset = HALF_PI;
-  static const num _arcMax = HALF_PI - EPSILON;
+  static const num _arcOffset = -HALF_PI;
+  static const num _arcMax = TWO_PI - EPSILON;
 
   ArcFunction _innerRadius = (Object d, int i) => (d as Map)["innerRadius"];
   ArcFunction _outerRadius = (Object d, int i) => (d as Map)["outerRadius"];
@@ -40,7 +40,6 @@ class Arc {
         a0 = _startAngle(d, i) + _arcOffset,
         a1 = _endAngle(d, i) + _arcOffset;
     
-    print("${a0} -> ${a1}");
     num da;
     if (a1 < a0) {
       da = a0;
