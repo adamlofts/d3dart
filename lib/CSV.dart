@@ -1,7 +1,7 @@
 
 part of D3Dart;
 
-Future<List> csv(String url) {
+Future<List<Map>> csv(String url) {
   return HttpRequest.getString(url).then((String response) {
     // FIXME: Super naive
     List keys;
