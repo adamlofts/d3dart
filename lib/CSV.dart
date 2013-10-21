@@ -3,7 +3,7 @@ part of D3Dart;
 
 Future<List> csv(String url) {
   return HttpRequest.getString(url).then((String response) {
-    // FIXME: Super naieve
+    // FIXME: Super naive
     List keys;
     List ret = [];
     for (String line in response.split("\n")) {
