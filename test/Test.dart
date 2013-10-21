@@ -69,7 +69,7 @@ void main() {
     var data = [4, 8, 15, 16, 23, 42];
     $test.text = "";
     BoundSelection selection = select("#test").selectAll("div").data(data);
-    EnterSelection sel = selection.enter();
+    Selection sel = selection.enter;
     sel.append("div");
     
     Scale.linear(domain: [0, max(data)], range: [0, 420]);

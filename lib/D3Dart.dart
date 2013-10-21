@@ -94,7 +94,7 @@ class Selection {
       for (Element elmt in group) {
         Element subelmt;
         if (elmt != null) {
-          subelmt = f(node, _datum[node], i, j);
+          subelmt = f(elmt, _datum[elmt], i, j);
           if (subelmt != null) {
             _datum[subelmt] = _datum[elmt];
           }
@@ -248,19 +248,13 @@ class Selection {
   bool get empty {
     return this.node == null;
   }
-}
-
-class EnterSelection extends Selection {
-  EnterSelection(Selection parent, Iterable<Object> _data) : super(parent, []) {
-    this._data = _data;
-  }
-
+  
   Selection append(String tag) {
-    EachFunction f = (Element elmt, dynamic d, int i, [int j]) {
+    return selectFunc((Element elmt, dynamic d, int i, [int j]) {
       Element child = new Element.tag(tag);
       elmt.append(child);
-    };
-    return this.selectFunc(f);
+      return child;
+    });
   }
 }
 
@@ -272,12 +266,68 @@ class BoundSelection extends Selection {
   }
   
   Selection get enter {
-    return new Selection(this, _enter);
+    return new EnterSelection(this, _enter);
   }
   
   Selection get exit {
     return new Selection(this, _exit);
   }
+}
+
+class EnterSelection extends Selection {
+  EnterSelection(Selection parent, List<_Group> groups) : super(parent, groups) {
+  }
+  
+  Selection selectFunc(EachFunction f) {
+    int j = 0;
+    List<_Group> subgroups = _groups.map((_Group group) {
+      _Group subgroup = new _Group();
+      //     upgroup = (group = this[j]).update;
+      subgroup.parentNode = group.parentNode;
+      int i = 0;
+      for (Element elmt in group) {
+        Element subelmt;
+        if (elmt != null) {
+          subelmt = f(group.parentNode, Selection._datum[elmt], i, j);
+          group[i] = subelmt; // FIXME: Don't think this is quite right see: https://github.com/mbostock/d3/blob/master/src/selection/enter-select.js#L13
+          if (subelmt != null) {
+            Selection._datum[subelmt] = Selection._datum[elmt];
+          }
+        }
+        subgroup.add(subelmt);
+        i += 1;
+      }
+      j += 1;
+    }).toList();
+    return new Selection(null, subgroups);
+  }
+  
+/*
+ * d3_selection_enterPrototype.select = function(selector) {
+  var subgroups = [],
+      subgroup,
+      subnode,
+      upgroup,
+      group,
+      node;
+
+  for (var j = -1, m = this.length; ++j < m;) {
+    upgroup = (group = this[j]).update;
+    subgroups.push(subgroup = []);
+    subgroup.parentNode = group.parentNode;
+    for (var i = -1, n = group.length; ++i < n;) {
+      if (node = group[i]) {
+        subgroup.push(upgroup[i] = subnode = selector.call(group.parentNode, node.__data__, i, j));
+        subnode.__data__ = node.__data__;
+      } else {
+        subgroup.push(null);
+      }
+    }
+  }
+
+  return d3_selection(subgroups);
+};
+ */
 }
 
 Selection select(String selector) {
@@ -300,15 +350,10 @@ class _SelectionStyle {
   _SelectionStyle(Selection this._selection);
   
   void setProperty(String propertyName, PropertyFunction f) {
-    int index = 0;
-    Iterator<Object> data_it = _selection._data.iterator;
-    for (Element elmt in _selection._groups) {
-      data_it.moveNext();
-      Object d = data_it.current;
-      dynamic v = f(d, index);
+    _selection.each((Element elmt, dynamic d, int i, [int j]) {
+      dynamic v = f(d, i);
       elmt.style.setProperty(propertyName, v);
-      index += 1;
-    }
+    });
   }
 
   // CSSStyleRule
