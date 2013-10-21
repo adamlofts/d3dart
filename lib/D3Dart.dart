@@ -4,6 +4,13 @@ library D3Dart;
 import 'dart:html';
 import 'dart:math' as Math;
 import 'dart:collection';
+import 'dart:async';
+import 'dart:svg';
+
+part 'Scale.dart';
+part 'Layout.dart';
+part 'CSV.dart';
+part 'SVG.dart';
 
 typedef String PropertyFunction(dynamic d, int i);
 typedef Object KeyFunction(dynamic d, int i);
@@ -43,9 +50,7 @@ class Selection {
   static Expando _datum = new Expando("__data__");
 
   Selection _parent;
-  
   List<_Group> _groups;
-  Iterable<Object> _data = [];
   
   Selection(Selection this._parent, List<List<Element>> this._groups);
   
@@ -65,8 +70,8 @@ class Selection {
   
   _SelectionStyle get style => new _SelectionStyle(this);
 
-  void attr(String name, String v) {
-    attrFunc(name, (d, i) => v);
+  void attr(String name, Object v) {
+    attrFunc(name, (d, i) => v.toString());
   }
   
   void attrFunc(String name, PropertyFunction f) {
@@ -97,6 +102,7 @@ class Selection {
         i += 1;
       }
       j += 1;
+      return subgroup;
     }).toList();
     return new Selection(null, subgroups);
   }
@@ -245,7 +251,7 @@ class Selection {
   
   Selection append(String tag) {
     return selectFunc((Element elmt, dynamic d, int i, [int j]) {
-      Element child = new Element.tag(tag);
+      Element child = new SvgElement.tag(tag);
       elmt.append(child);
       return child;
     });
@@ -292,6 +298,7 @@ class EnterSelection extends Selection {
         i += 1;
       }
       j += 1;
+      return subgroup;
     }).toList();
     return new Selection(null, subgroups);
   }
@@ -356,20 +363,7 @@ class _SelectionStyle {
   void set fontSize(PropertyFunction f) => setProperty("font-size", f);
   void set width(PropertyFunction f) => setProperty("width", f);
   void set height(PropertyFunction f) => setProperty("height", f);
-}
-
-class Scale {
-  static PropertyFunction linear({List domain, List range, String suffix: "px"}) {
-    return (dynamic d, int i) {
-      if (domain != null) {
-        d = (d - domain[0]) / domain[1];
-      }
-      if (range != null) {
-        d = d * (range[1] - range[0]);
-      }
-      return "${d}${suffix}";
-    };
-  }
+  void set textAnchor(PropertyFunction f) => setProperty("text-anchor", f);
 }
 
 num max(Iterable<Object> data) {
@@ -380,4 +374,31 @@ num max(Iterable<Object> data) {
     }
   }
   return v;
+}
+
+num sum(Iterable<Object> data) {
+  num v = 0;
+  for (num v1 in data) {
+    v += v1;
+  }
+  return v;
+}
+
+/**
+ * Generates an array containing an arithmetic progression, similar to the Python built-in range.
+ * 
+ * This method is often used to iterate over a sequence of numeric or integer values, such as the indexes into an array.
+ * Unlike the Python version, the arguments are not required to be integers, though the results are more predictable
+ * if they are due to floating point precision. If step is omitted, it defaults to 1. If start is omitted, it defaults to 0.
+ * The stop value is not included in the result. The full form returns an array of numbers [start, start + step, start + 2 * step, …].
+ * If step is positive, the last element is the largest start + i * step less than stop; if step is negative, the last element is the
+ * smallest start + i * step greater than stop. If the returned array would contain an infinite number of values,
+ * an error is thrown rather than causing an infinite loop.
+ */
+List<int> range(int stop, { int start: 0, int step: 1 }) {
+  List<int> ret = new List<int>(stop);
+  for (int i = 0; i < stop; i += 1) {
+    ret[i] = i;
+  }
+  return ret;
 }
