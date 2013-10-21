@@ -59,8 +59,11 @@ class Scale {
 
 class Ordinal {
   Function range(List<Object> value) {
-    return (int index) {
-      return value[index];
+    int i = 0;
+    return (Object wtf) {
+      i += 1;
+      return value[i - 1];
+      //return value[index];
     };
   }
 }

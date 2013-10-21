@@ -1,10 +1,6 @@
 
 part of D3Dart;
 
-const num HALF_PI = Math.PI / 2;
-const num EPSILON = 1e-6;
-const num EPSILON_SQD = EPSILON * EPSILON;
-
 class Layout {
   static PieLayout pie(List<Object> data) {
     return new PieLayout();
@@ -16,7 +12,7 @@ typedef num ValueFunction(dynamic d);
 class PieLayout {
 
   num startAngle = 0;
-  num endAngle = HALF_PI;
+  num endAngle = TWO_PI;
   ValueFunction value;
   
   PieLayout();
@@ -52,12 +48,14 @@ class PieLayout {
     List<Map> arcs = [];
     index.forEach((int i) {
       var d = values[i];
+      var end = a + d * k;
       arcs.add({
         "data": _data[i],
         "value": d,
         "startAngle": a,
-        "endAngle": a += d * k
+        "endAngle": end
       });
+      a = end;
     });
     return arcs;
   }

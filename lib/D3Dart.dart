@@ -12,6 +12,11 @@ part 'Layout.dart';
 part 'CSV.dart';
 part 'SVG.dart';
 
+const num TWO_PI = Math.PI * 2;
+const num HALF_PI = Math.PI / 2;
+const num EPSILON = 1e-6;
+const num EPSILON_SQD = EPSILON * EPSILON;
+
 typedef String PropertyFunction(dynamic d, int i);
 typedef Object KeyFunction(dynamic d, int i);
 typedef EachFunction(Element elmt, dynamic d, int i, [int j]);
@@ -364,6 +369,7 @@ class _SelectionStyle {
   void set width(PropertyFunction f) => setProperty("width", f);
   void set height(PropertyFunction f) => setProperty("height", f);
   void set textAnchor(PropertyFunction f) => setProperty("text-anchor", f);
+  void set fill(PropertyFunction f) => setProperty("fill", f);
 }
 
 num max(Iterable<Object> data) {
