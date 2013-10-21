@@ -11,10 +11,14 @@ typedef EachFunction(Element elmt, dynamic d, int i, [int j]);
 
 class _Group extends ListMixin<Element> {
   Element parentNode;
-  List<Element> _list = [];
+  List<Element> _list;
   
-  _Group() {
-    
+  _Group([int size]) {
+    if (size != null) {
+      _list = new List<Element>(size);
+    } else {
+      _list = [];
+    }
   }
   
   Element operator [](int index) {
@@ -49,17 +53,11 @@ class Selection {
     return _groups.length;
   }
   
-  /*
-  String get text {
-    Element elmt = node;
-    if (elmt != null) {
-      return elmt.text;
-    }
-    return '';
+  void set text(String v) {
+    textFunc = (d, i) => v;
   }
-  */
   
-  void set text(PropertyFunction f) {
+  void set textFunc(PropertyFunction f) {
     each((Element elmt, dynamic d, int i, [int j]) {
       elmt.text = f(d, i);
     });
@@ -67,7 +65,11 @@ class Selection {
   
   _SelectionStyle get style => new _SelectionStyle(this);
 
-  void attr(String name, PropertyFunction f) {
+  void attr(String name, String v) {
+    attrFunc(name, (d, i) => v);
+  }
+  
+  void attrFunc(String name, PropertyFunction f) {
     int index = 0;
     Iterator<Object> data_it = _data.iterator;
     for (Element elmt in _groups) {
@@ -106,7 +108,6 @@ class Selection {
   }
   
   Selection selectAll(String selector) {
-    
     List<_Group> subgroups = [];
     int j = 0;
     for (_Group group in _groups) {
@@ -125,8 +126,57 @@ class Selection {
     return new Selection(null, subgroups);
   }
 
-  BoundSelection data(Iterable<Object> value, { KeyFunction key: null }) {
-    return new BoundSelection(_parent, _groups, value, key);
+  Element _createDataNode(Object data) { // See: https://github.com/mbostock/d3/blob/master/src/selection/data.js#L116
+    Element elmt = new SpanElement();
+    _datum[elmt] = data;
+    return elmt;
+  }
+  
+  BoundSelection data(List<Object> group_data, { KeyFunction key: null }) {
+    List<_Group> enter = [];
+    List<_Group> update = [];
+    List<_Group> exit = [];
+    
+    for (_Group group in _groups) {
+      int n = group.length;
+      int m = group_data.length;
+      int n0 = Math.min(n, m);
+      int i;
+      
+      _Group enter_group = new _Group(m);
+      _Group update_group = new _Group(m);
+      _Group exit_group = new _Group(n);
+      
+      enter_group.parentNode = group.parentNode;
+      update_group.parentNode = group.parentNode;
+      exit_group.parentNode = group.parentNode;
+      
+      if (key != null) {
+        throw new UnimplementedError();
+      } else {
+        for (i = 0; i < n0; i += 1) {
+          Element node = group[i];
+          Object node_data = group_data[i];
+          if (node != null) {
+            _datum[node] = node_data;
+            update_group[i] = node;
+          } else {
+            enter_group[i] = _createDataNode(node_data);
+          }
+        }
+        for (; i < m; ++i) {
+          enter_group[i] = _createDataNode(group_data[i]);
+        }
+        for (; i < n; ++i) {
+          exit_group[i] = group[i];
+        }
+      }
+      
+      enter.add(enter_group);
+      update.add(update_group);
+      exit.add(exit_group);
+    }
+    return new BoundSelection(this, update, enter, exit);
   }
   
   /**
@@ -182,6 +232,22 @@ class Selection {
       j += 1;
     }
   }
+  
+  /**
+   * Returns the total number of elements in the current selection.
+   */
+  int get size {
+    int n = 0;
+    each((Element elmt, dynamic d, int i, [int j]) => n += 1);
+    return n;
+  }
+  
+  /**
+   * Returns true if the current selection is empty; a selection is empty if it contains no non-null elements.
+   */
+  bool get empty {
+    return this.node == null;
+  }
 }
 
 class EnterSelection extends Selection {
@@ -199,25 +265,18 @@ class EnterSelection extends Selection {
 }
 
 class BoundSelection extends Selection {
-  Iterable<Object> _all_data;
-  KeyFunction _key;
-  Map<Object, Element> _bound;
-  int _taken;
+  List<_Group> _enter;
+  List<_Group> _exit;
   
-  BoundSelection(Selection parent, List<_Group> groups, Iterable<Object> this._all_data, KeyFunction this._key) : super(parent, []) {
-    _taken = Math.min(groups.length, _data.length);
-    this._groups.addAll(groups.take(_taken));
-    this._data = _all_data.take(_taken);
+  BoundSelection(Selection parent, List<_Group> groups, List<_Group> this._enter, List<_Group> this._exit) : super(parent, groups) {
   }
   
-  EnterSelection enter() {
-    int taken = _taken;
-    _taken = _all_data.length;
-    return new EnterSelection(_parent, _all_data.skip(taken));
+  Selection get enter {
+    return new Selection(this, _enter);
   }
   
-  Object remove() {
-    throw new UnimplementedError();
+  Selection get exit {
+    return new Selection(this, _exit);
   }
 }
 

@@ -39,9 +39,9 @@ void go(_) {
   d3.EnterSelection enter = bound.enter();
   enter.append("circle");
   var rng = new Math.Random();
-  enter.attr("cy", (d,i) => "${rng.nextInt(200)}");
-  enter.attr("cx", (d,i) => "${rng.nextInt(200)}");
-  enter.attr("r", (d, i) {
+  enter.attrFunc("cy", (d,i) => "${rng.nextInt(200)}");
+  enter.attrFunc("cx", (d,i) => "${rng.nextInt(200)}");
+  enter.attrFunc("r", (d, i) {
     return "${Math.sqrt(d)}";
   });
   

@@ -20,6 +20,29 @@ void main() {
     empty.datum = 25;
     expect(empty.datum, equals(null));
   });
+  
+  test("Data", () {
+    $test.text = "";
+    Selection sel = select("#test").selectAll("p");
+    BoundSelection bsel = sel.data([1, 2, 3]);
+    expect(bsel.size, equals(0));
+    expect(bsel.enter.size, equals(3));
+    expect(bsel.exit.size, equals(0));
+
+    $test.append(new ParagraphElement());
+    sel = select("#test").selectAll("p");
+    bsel = sel.data([1, 2, 3]);
+    expect(bsel.size, equals(1));
+    expect(bsel.enter.size, equals(2));
+    expect(bsel.exit.size, equals(0));
+    
+    $test.append(new ParagraphElement());
+    sel = select("#test").selectAll("p");
+    bsel = sel.data([1]);
+    expect(bsel.size, equals(1));
+    expect(bsel.enter.size, equals(0));
+    expect(bsel.exit.size, equals(1));
+  });
 
   test('Selection', () {
     
@@ -28,7 +51,7 @@ void main() {
     expect(sel2.length, 1); // Empty group
     
     Selection test = select("#test");
-    test.text = (a,b) => "Hello";
+    test.text = "Hello";
     expect($test.text, equals("Hello"));
     $test.text = "";
     
@@ -38,7 +61,7 @@ void main() {
     $test.append(p2);
     
     sel = test.selectAll("p");
-    sel.text = (a,b) => "Bye";
+    sel.textFunc = (a,b) => "Bye";
     expect($test.children.first.text, equals("Bye"));
   });
   
@@ -52,7 +75,7 @@ void main() {
     Scale.linear(domain: [0, max(data)], range: [0, 420]);
     sel.style.width = (d, i) => "${d * 10}px";
     sel.style.height = (d, i) => "20px";
-    sel.text = (d, i) => "${d}";
+    sel.textFunc = (d, i) => "${d}";
     sel.style.backgroundColor = (d, i) => "blue";
     
     expect($test.children.first.style.width, equals("40px"));
