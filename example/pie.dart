@@ -21,7 +21,7 @@ void main() {
   svg = svg.append("g");
   svg.attr("transform", "translate(${width / 2},${height / 2})");
   
-  var pie = d3.Layout.pie([]);
+  var pie = d3.Layout.pie();
   pie.value = (Map d) => d["population"];
   
   d3.csv("pie.csv").then((List data) {

@@ -2,7 +2,7 @@
 part of D3Dart;
 
 class Layout {
-  static PieLayout pie(List<Object> data) {
+  static PieLayout pie() {
     return new PieLayout();
   }
 }
