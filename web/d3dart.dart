@@ -16,19 +16,7 @@ void main() {
   
   //var circle = svg.selectAll("circle");
   
-  Map<Element, Object> m = {};
-  var b1 = query("h1");
-  var b2 = query("h1");
-  
-  m[b1] = 1;
-  m[b2] = 2;
-  
-  
-  print(m.length);
-  print(b1 == b2);
-  print(identical(b1, b2));
-  
-  //query("button").onClick.listen(go);
+  query("button").onClick.listen(go);
 }
 
 void go(_) {
@@ -36,7 +24,7 @@ void go(_) {
   d3.Selection circle = svg.selectAll("circle");
   
   d3.BoundSelection bound = circle.data([57, 32, 112, 293]);
-  d3.EnterSelection enter = bound.enter();
+  d3.Selection enter = bound.enter;
   enter.append("circle");
   var rng = new Math.Random();
   enter.attrFunc("cy", (d,i) => "${rng.nextInt(200)}");
@@ -44,6 +32,5 @@ void go(_) {
   enter.attrFunc("r", (d, i) {
     return "${Math.sqrt(d)}";
   });
-  
-
+  enter.style.backgroundColor = (d,i) => "red";
 }

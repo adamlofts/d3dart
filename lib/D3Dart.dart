@@ -70,15 +70,9 @@ class Selection {
   }
   
   void attrFunc(String name, PropertyFunction f) {
-    int index = 0;
-    Iterator<Object> data_it = _data.iterator;
-    for (Element elmt in _groups) {
-      data_it.moveNext();
-      Object d = data_it.current;
-      dynamic v = f(d, index);
-      elmt.attributes[name] = v;
-      index += 1;
-    }
+    each((Element elmt, dynamic d, int i, [int j]) {
+      elmt.attributes[name] = f(d, i);
+    });
   }
   
   Selection select(String selector) {
