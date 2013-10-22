@@ -21,7 +21,14 @@ form {
   <label><input type="radio" name="mode" value="size"> Size</label>
   <label><input type="radio" name="mode" value="count" checked> Count</label>
 </form>
-<!-- <script src="http://d3js.org/d3.v3.min.js"></script>  -->
+
+<script src="d3.v3.js"></script>
+<script>
+d3.json("flare.json", function(error, root) {
+  var partition = d3.layout.partition();
+  partition.nodes(root, 0);
+});
+</script>
 <script>
 /*
 var width = 960,

@@ -16,6 +16,42 @@ void main() {
     ..append("g")
     .attr("transform", "translate(${width / 2},${height * .52})");
 
+  var partition = d3.Layout.partition();
+  partition.size = [2 * Math.PI, radius * radius];
+  partition.value = (Object d, int depth) => 1;
+  //     .sort(null)
+
+  d3.Arc arc = new d3.Arc();
+  arc.startAngle = (Object d, int i) => (d as Map)["x"];
+  arc.endAngle = (Object d, int i) => (d as Map)["x"] * (d as Map)["x"];
+  arc.innerRadius = (Object d, int i) => Math.sqrt((d as Map)["y"]);
+  arc.outerRadius = (Object d, int i) => Math.sqrt((d as Map)["y"] + (d as Map)["dy"]);
+  
+  d3.json("flare.json").then((Object root) {
+    svg.datum = root;
+    var path = svg.selectAll("path").dataFunc(partition.nodes);
+    var append = path.enter.append("path");
+    
+    append.attrFunc("display", (d, i) { // hide inner ring
+      if (d["depth"] > 0) {
+        return "";
+      }
+      return "none";
+    });
+    
+    append.attrFunc("d", arc);
+    append.style.stroke = (d, i) => "#FFF";
+    append.style.fill = (d, i) => "#000";
+    
+    //.style("fill", function(d) { return color((d.children ? d : d.parent).name); })
+
+    /*
+     * .style("fill-rule", "evenodd")
+      .each(stash);
+     */
+    
+  });
+  
   /*
 
 var partition = d3.layout.partition()

@@ -1,8 +1,6 @@
 
 part of D3Dart;
 
-typedef num ValueFunction(dynamic d);
-
 class PieLayout {
 
   num startAngle = 0;

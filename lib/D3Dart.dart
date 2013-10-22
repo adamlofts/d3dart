@@ -6,10 +6,15 @@ import 'dart:math' as Math;
 import 'dart:collection';
 import 'dart:async';
 import 'dart:svg';
+import 'dart:convert';
 
 part 'Scale.dart';
+
 part 'layout/Layout.dart';
 part 'layout/PieLayout.dart';
+part 'layout/HierarchyLayout.dart';
+part 'layout/PartitionLayout.dart';
+
 part 'CSV.dart';
 part 'SVG.dart';
 
@@ -138,6 +143,15 @@ class Selection {
     return elmt;
   }
   
+  BoundSelection dataFunc(KeyFunction f, { KeyFunction key: null }) {
+    int i = -1;
+    List<Object> group_data = _groups.map((_Group group) {
+      i += 1;
+      return f(_datum[group.parentNode], i);
+    }).toList();
+    return data(group_data[0], key: key);
+  }
+
   BoundSelection data(List<Object> group_data, { KeyFunction key: null }) {
     List<_Group> enter = [];
     List<_Group> update = [];
@@ -371,6 +385,7 @@ class _SelectionStyle {
   void set height(PropertyFunction f) => setProperty("height", f);
   void set textAnchor(PropertyFunction f) => setProperty("text-anchor", f);
   void set fill(PropertyFunction f) => setProperty("fill", f);
+  void set stroke(PropertyFunction f) => setProperty("stroke", f);
 }
 
 num max(Iterable<Object> data) {

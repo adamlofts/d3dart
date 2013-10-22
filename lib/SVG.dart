@@ -7,38 +7,38 @@ class Arc {
   static const num _arcOffset = -HALF_PI;
   static const num _arcMax = TWO_PI - EPSILON;
 
-  ArcFunction _innerRadius = (Object d, int i) => (d as Map)["innerRadius"];
-  ArcFunction _outerRadius = (Object d, int i) => (d as Map)["outerRadius"];
-  ArcFunction _startAngle = (Object d, int i) => (d as Map)["startAngle"];
-  ArcFunction _endAngle = (Object d, int i) => (d as Map)["endAngle"];
+  ArcFunction innerRadius = (Object d, int i) => (d as Map)["innerRadius"];
+  ArcFunction outerRadius = (Object d, int i) => (d as Map)["outerRadius"];
+  ArcFunction startAngle = (Object d, int i) => (d as Map)["startAngle"];
+  ArcFunction endAngle = (Object d, int i) => (d as Map)["endAngle"];
   
-  void set innerRadius(num value) {
-    _innerRadius = (Object d, int i) => value;
+  void set innerRadiusConst(num value) {
+    innerRadius = (Object d, int i) => value;
   }
   
-  void set outerRadius(num value) {
-    _outerRadius = (Object d, int i) => value;
+  void set outerRadiusConst(num value) {
+    outerRadius = (Object d, int i) => value;
   }
   
-  void set startAngle(num value) {
-    _startAngle = (Object d, int i) => value;
+  void set startAngleConst(num value) {
+    startAngle = (Object d, int i) => value;
   }
   
-  void set endAngle(num value) {
-    _endAngle = (Object d, int i) => value;
+  void set endAngleConst(num value) {
+    endAngle = (Object d, int i) => value;
   }
   
   List<int> centroid(Object d, int i) {
-    num r = (_innerRadius(d, i) + _outerRadius(d, i)) / 2;
-    num a = (_startAngle(d, i) + _endAngle(d, i)) / 2 + _arcOffset;
+    num r = (innerRadius(d, i) + outerRadius(d, i)) / 2;
+    num a = (startAngle(d, i) + endAngle(d, i)) / 2 + _arcOffset;
     return [Math.cos(a) * r, Math.sin(a) * r];
   }
   
   String call(dynamic d, int i) {
-    num r0 = _innerRadius(d, i),
-        r1 = _outerRadius(d, i),
-        a0 = _startAngle(d, i) + _arcOffset,
-        a1 = _endAngle(d, i) + _arcOffset;
+    num r0 = innerRadius(d, i),
+        r1 = outerRadius(d, i),
+        a0 = startAngle(d, i) + _arcOffset,
+        a1 = endAngle(d, i) + _arcOffset;
     
     num da;
     if (a1 < a0) {

@@ -1,6 +1,12 @@
 
 part of D3Dart;
 
+Future<Object> json(String url) {
+  return HttpRequest.getString(url).then((String response) {
+    return JSON.decode(response);
+  });
+}
+
 Future<List<Map>> csv(String url) {
   return HttpRequest.getString(url).then((String response) {
     // FIXME: Super naive
