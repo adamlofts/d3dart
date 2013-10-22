@@ -44,6 +44,7 @@ void main() {
     append.attrFunc("d", arc);
     append.style.stroke = (d, i) => "#FFF";
     append.style.fill = (d, i) => "#000";
+    append.style.fillRule = (d, i) => "evenodd";
     
     //.style("fill", function(d) { return color((d.children ? d : d.parent).name); })
 
