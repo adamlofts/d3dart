@@ -356,5 +356,6 @@ class _SelectionStyle {
   void set height(PropertyFunction f) => setProperty("height", f);
   void set textAnchor(PropertyFunction f) => setProperty("text-anchor", f);
   void set fill(PropertyFunction f) => setProperty("fill", f);
+  void set fillRule(PropertyFunction f) => setProperty("fill-rule", f);
   void set stroke(PropertyFunction f) => setProperty("stroke", f);
 }

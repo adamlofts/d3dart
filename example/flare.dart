@@ -8,13 +8,15 @@ void main() {
   num width = 960,
       height = 700,
       radius = Math.min(width, height) / 2;
+
   Function color = d3.Scale.category20c;
   
   d3.Selection svg = d3.select("body").append("svg")
     ..attr("width", width)
-    ..attr("height", height)
-    ..append("g")
-    .attr("transform", "translate(${width / 2},${height * .52})");
+    ..attr("height", height);
+  
+  svg = svg.append("g");
+  svg.attr("transform", "translate(${width / 2},${height * .52})");
 
   var partition = d3.Layout.partition();
   partition.size = [2 * Math.PI, radius * radius];
@@ -23,7 +25,7 @@ void main() {
 
   d3.Arc arc = new d3.Arc();
   arc.startAngle = (Object d, int i) => (d as Map)["x"];
-  arc.endAngle = (Object d, int i) => (d as Map)["x"] * (d as Map)["x"];
+  arc.endAngle = (Object d, int i) => (d as Map)["x"] + (d as Map)["dx"];
   arc.innerRadius = (Object d, int i) => Math.sqrt((d as Map)["y"]);
   arc.outerRadius = (Object d, int i) => Math.sqrt((d as Map)["y"] + (d as Map)["dy"]);
   
