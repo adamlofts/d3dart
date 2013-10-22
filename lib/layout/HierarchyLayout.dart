@@ -19,7 +19,8 @@ class HierarchyLayout {
   }
   
   void revalue(Map root) {
-    _revalue(root, 0);
+    throw new UnimplementedError(); 
+    //_revalue(root, 0);
   }
   
   void _recurse(Map node, int depth, List nodes) {
