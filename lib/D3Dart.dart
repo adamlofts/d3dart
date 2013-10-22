@@ -8,7 +8,8 @@ import 'dart:async';
 import 'dart:svg';
 
 part 'Scale.dart';
-part 'Layout.dart';
+part 'layout/Layout.dart';
+part 'layout/PieLayout.dart';
 part 'CSV.dart';
 part 'SVG.dart';
 
