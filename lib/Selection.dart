@@ -117,13 +117,58 @@ class Selection {
     return elmt;
   }
   
+  List _dataBind(_Group group, List<Object> group_data, KeyFunction key) {
+    int n = group.length;
+    int m = group_data.length;
+    int n0 = Math.min(n, m);
+    int i;
+    
+    _Group enter_group = new _Group(m);
+    _Group update_group = new _Group(m);
+    _Group exit_group = new _Group(n);
+    
+    enter_group.parentNode = group.parentNode;
+    update_group.parentNode = group.parentNode;
+    exit_group.parentNode = group.parentNode;
+    
+    if (key != null) {
+      throw new UnimplementedError();
+    } else {
+      for (i = 0; i < n0; i += 1) {
+        Element node = group[i];
+        Object node_data = group_data[i];
+        if (node != null) {
+          _datum[node] = node_data;
+          update_group[i] = node;
+        } else {
+          enter_group[i] = _createDataNode(node_data);
+        }
+      }
+      for (; i < m; ++i) {
+        enter_group[i] = _createDataNode(group_data[i]);
+      }
+      for (; i < n; ++i) {
+        exit_group[i] = group[i];
+      }
+    }
+    
+    return [enter_group, update_group, exit_group];
+  }
+  
   BoundSelection dataFunc(KeyFunction f, { KeyFunction key: null }) {
-    int i = -1;
-    List<Object> group_data = _groups.map((_Group group) {
+    List<_Group> enter = [];
+    List<_Group> update = [];
+    List<_Group> exit = [];
+    
+    int i = 0;
+    for (_Group group in _groups) {
+      List l = _dataBind(group, f(_datum[group.parentNode], i), key);      
+      enter.add(l[0]);
+      update.add(l[1]);
+      exit.add(l[2]);
       i += 1;
-      return f(_datum[group.parentNode], i);
-    }).toList();
-    return data(group_data[0], key: key);
+    }
+    return new BoundSelection(this, update, enter, exit);
   }
 
   BoundSelection data(List<Object> group_data, { KeyFunction key: null }) {
@@ -132,43 +177,10 @@ class Selection {
     List<_Group> exit = [];
     
     for (_Group group in _groups) {
-      int n = group.length;
-      int m = group_data.length;
-      int n0 = Math.min(n, m);
-      int i;
-      
-      _Group enter_group = new _Group(m);
-      _Group update_group = new _Group(m);
-      _Group exit_group = new _Group(n);
-      
-      enter_group.parentNode = group.parentNode;
-      update_group.parentNode = group.parentNode;
-      exit_group.parentNode = group.parentNode;
-      
-      if (key != null) {
-        throw new UnimplementedError();
-      } else {
-        for (i = 0; i < n0; i += 1) {
-          Element node = group[i];
-          Object node_data = group_data[i];
-          if (node != null) {
-            _datum[node] = node_data;
-            update_group[i] = node;
-          } else {
-            enter_group[i] = _createDataNode(node_data);
-          }
-        }
-        for (; i < m; ++i) {
-          enter_group[i] = _createDataNode(group_data[i]);
-        }
-        for (; i < n; ++i) {
-          exit_group[i] = group[i];
-        }
-      }
-      
-      enter.add(enter_group);
-      update.add(update_group);
-      exit.add(exit_group);
+      List l = _dataBind(group, group_data, key);
+      enter.add(l[0]);
+      update.add(l[1]);
+      exit.add(l[2]);
     }
     return new BoundSelection(this, update, enter, exit);
   }
