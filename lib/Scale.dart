@@ -62,7 +62,7 @@ class Ordinal {
     int i = 0;
     return (Object wtf) {
       i += 1;
-      return value[i - 1];
+      return value[(i - 1) % value.length];
       //return value[index];
     };
   }
