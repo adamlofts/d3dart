@@ -1,12 +1,12 @@
 
-import 'dart:html';
+import 'dart:html' as html;
 
 import 'package:unittest/unittest.dart';
 
 import '../lib/D3Dart.dart';
 
 void main() {
-  Element $test = query("#test");
+  html.Element $test = html.querySelector("#test");
   
   test('Datum', () {
     Selection sel = select("#test");
@@ -29,14 +29,14 @@ void main() {
     expect(bsel.enter.size, equals(3));
     expect(bsel.exit.size, equals(0));
 
-    $test.append(new ParagraphElement());
+    $test.append(new html.ParagraphElement());
     sel = select("#test").selectAll("p");
     bsel = sel.data([1, 2, 3]);
     expect(bsel.size, equals(1));
     expect(bsel.enter.size, equals(2));
     expect(bsel.exit.size, equals(0));
     
-    $test.append(new ParagraphElement());
+    $test.append(new html.ParagraphElement());
     sel = select("#test").selectAll("p");
     bsel = sel.data([1]);
     expect(bsel.size, equals(1));
@@ -55,8 +55,8 @@ void main() {
     expect($test.text, equals("Hello"));
     $test.text = "";
     
-    Element p1 = new ParagraphElement();
-    Element p2 = new ParagraphElement();
+    html.Element p1 = new html.ParagraphElement();
+    html.Element p2 = new html.ParagraphElement();
     $test.append(p1);
     $test.append(p2);
     
