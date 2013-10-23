@@ -54,13 +54,10 @@ void main() {
       return "#${color(d["name"]).toRadixString(16)}";
     };
     path.style.fillRule = (d, i) => "evenodd";
-    
-
     /*
       .each(stash);
      */
-    
-    
+
     for (Element elmt in querySelectorAll("input")) {
       elmt.onChange.listen(onChange);
     }
@@ -79,9 +76,7 @@ void onChange(Event evt) {
   partition.value = value;
   d3.BoundSelection bound = path.dataFunc(partition.nodes);
   bound.attrFunc("d", arc);
-  //bound.attrFunc("d", )
   
-  return;
   /*
   var value = this.value === "count"
       ? function() { return 1; }
@@ -95,22 +90,6 @@ void onChange(Event evt) {
         */
 }
   /*
-
-d3.json("flare.json", function(error, root) {
-
-  d3.selectAll("input").on("change", function change() {
-    var value = this.value === "count"
-        ? function() { return 1; }
-        : function(d) { return d.size; };
-
-    path
-        .data(partition.value(value).nodes)
-      .transition()
-        .duration(1500)
-        .attrTween("d", arcTween);
-  });
-});
-
 // Stash the old values for transition.
 function stash(d) {
   d.x0 = d.x;
