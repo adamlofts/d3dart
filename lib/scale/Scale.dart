@@ -48,23 +48,14 @@ class Scale {
     0x636363, 0x969696, 0xbdbdbd, 0xd9d9d9
   ];
   
-  static Function get category20c {
-    return ordinal().range(_category20c);
+  static Ordinal get category20c {
+    Ordinal ordinal = new Ordinal();
+    ordinal.range = _category20c;
+    return ordinal;
   }
   
   static Ordinal ordinal() {
     return new Ordinal();
-  }
-}
-
-class Ordinal {
-  Function range(List<Object> value) {
-    int i = 0;
-    return (Object wtf) {
-      i += 1;
-      return value[(i - 1) % value.length];
-      //return value[index];
-    };
   }
 }
 

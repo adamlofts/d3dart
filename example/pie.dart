@@ -7,8 +7,8 @@ void main() {
       height = 500,
       radius = Math.min(width, height) / 2;
 
-  Function color = d3.Scale.ordinal()
-      .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
+  d3.Ordinal color = new d3.Ordinal();
+  color.range = ["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"];
   
   d3.Arc arc = new d3.Arc();
   arc.outerRadiusConst = radius - 10;

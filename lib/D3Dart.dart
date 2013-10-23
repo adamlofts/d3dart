@@ -8,8 +8,10 @@ import 'dart:async';
 import 'dart:svg';
 import 'dart:convert';
 
-part 'Scale.dart';
 part 'Selection.dart';
+
+part 'scale/Ordinal.dart';
+part 'scale/Scale.dart';
 
 part 'layout/Layout.dart';
 part 'layout/PieLayout.dart';

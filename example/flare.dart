@@ -1,6 +1,5 @@
 
 import 'dart:math' as Math;
-import 'dart:html';
 import 'package:d3dart/D3Dart.dart' as d3;
 
 void main() {
@@ -9,7 +8,7 @@ void main() {
       height = 700,
       radius = Math.min(width, height) / 2;
 
-  Function color = d3.Scale.category20c;
+  d3.Ordinal color = d3.Scale.category20c;
   
   d3.Selection svg = d3.select("body").append("svg")
     ..attr("width", width)
@@ -43,7 +42,12 @@ void main() {
     
     append.attrFunc("d", arc);
     append.style.stroke = (d, i) => "#FFF";
-    append.style.fill = (d, i) => "#${color(i).toRadixString(16)}";
+    append.style.fill = (Map d, i) {
+      if ((d["children"] == null) || (d["children"].isEmpty)) {
+        d = d["parent"];
+      }
+      return "#${color(d["name"]).toRadixString(16)}";
+    };
     append.style.fillRule = (d, i) => "evenodd";
     
     //.style("fill", function(d) { return color((d.children ? d : d.parent).name); })
