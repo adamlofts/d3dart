@@ -61,7 +61,7 @@ class Selection {
   
   void attrFunc(String name, PropertyFunction f) {
     each((Element elmt, dynamic d, int i, [int j]) {
-      elmt.attributes[name] = f(d, i);
+      elmt.attributes[name] = f(d, i).toString();
     });
   }
   

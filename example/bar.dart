@@ -7,6 +7,8 @@ void main() {
       width = 960 - margin["left"] - margin["right"],
       height = 500 - margin["top"] - margin["bottom"];
   
+  var y = new d3.LinearScale(range: [height, 0]);
+  
   //var formatPercent = d3.format(".0%");
   
   /**
@@ -29,6 +31,7 @@ var yAxis = d3.svg.axis()
     
    */
   
+  /*
   d3.Ordinal color = new d3.Ordinal();
   color.range = ["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"];
   
@@ -45,7 +48,67 @@ var yAxis = d3.svg.axis()
   
   var pie = d3.Layout.pie();
   pie.value = (Map d) => d["population"];
+  */
   
+  var svg = d3.select("body").append("svg");
+  
+  svg.attr("width", width + margin["left"] + margin["right"]);
+  svg.attr("height", height + margin["top"] + margin["bottom"]);
+  svg = svg.append("g");
+  svg.attr("transform", "translate(${margin["left"]},${margin["top"]})");
+  
+  d3.tsv("bar.tsv").then((List data) {
+    /*
+     * x.domain(data.map(function(d) { return d.letter; }));
+  y.domain([0, d3.max(data, function(d) { return d.frequency; })]);
+     */
+    print(data);
+    
+    var rect = svg.selectAll(".bar")
+      .data(data)
+    .enter.append("rect");
+    
+    rect.attr("class", "bar");
+    rect.attrFunc("x", (d,i) => i * 20);
+
+    rect.attrFunc("width", (d,i) => /* x.rangeBand() */ "20");
+    rect.attrFunc("y", (d,i) => /* y( */ (d as Map)["frequency"]);
+    rect.attrFunc("height", (d,i) => height - (d as Map)["frequency"]);
+
+    //rect.attr("height", function(d) { return height - y(d.frequency); });
+    
+  });
+  
+  return;
+  /*
+   * 
+
+  svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis);
+
+  svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+    .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("Frequency");
+
+  svg.selectAll(".bar")
+      .data(data)
+    .enter().append("rect")
+      .attr("class", "bar")
+      .attr("x", function(d) { return x(d.letter); })
+      .attr("width", x.rangeBand())
+      .attr("y", function(d) { return y(d.frequency); })
+      .attr("height", function(d) { return height - y(d.frequency); });
+
+});
+
   d3.csv("pie.csv").then((List data) {
     data.forEach((Map d) {
       d["population"] = double.parse(d["population"]);
@@ -68,6 +131,7 @@ var yAxis = d3.svg.axis()
     text.style.textAnchor = (d, i) => "middle";
     text.textFunc = (d, i) => d["data"]["age"];
   });
+  */
 }
 
 /*

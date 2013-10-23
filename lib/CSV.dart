@@ -7,13 +7,13 @@ Future<Object> json(String url) {
   });
 }
 
-Future<List<Map>> csv(String url) {
+Future<List<Map>> csv(String url, { String separator: "," }) {
   return HttpRequest.getString(url).then((String response) {
     // FIXME: Super naive
     List keys;
     List ret = [];
     for (String line in response.split("\n")) {
-      List<String> values = line.split(",");
+      List<String> values = line.split(separator);
       if (keys == null) {
         keys = values;
         continue;
@@ -23,7 +23,12 @@ Future<List<Map>> csv(String url) {
       Iterator<String> value_it = values.iterator;
       for (String key in keys) {
         value_it.moveNext();
-        m[key] = value_it.current;
+        String value = value_it.current;
+        try {
+          m[key] = double.parse(value);
+        } on FormatException catch (e) {
+          m[key] = value;
+        }
       }
       
       ret.add(m);
@@ -31,3 +36,5 @@ Future<List<Map>> csv(String url) {
     return ret;
   });
 }
+
+Future<List<Map>> tsv(String url) => csv(url, separator: "\t");
