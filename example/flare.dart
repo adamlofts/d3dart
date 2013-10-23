@@ -1,6 +1,11 @@
 
 import 'dart:math' as Math;
+import 'dart:html';
 import 'package:d3dart/D3Dart.dart' as d3;
+
+d3.Selection path;
+var partition;
+d3.Arc arc;
 
 void main() {
   
@@ -17,12 +22,12 @@ void main() {
   svg = svg.append("g");
   svg.attr("transform", "translate(${width / 2},${height * .52})");
 
-  var partition = d3.Layout.partition();
+  partition = d3.Layout.partition();
   partition.size = [2 * Math.PI, radius * radius];
   partition.value = (Object d, int depth) => 1;
   //     .sort(null)
 
-  d3.Arc arc = new d3.Arc();
+  arc = new d3.Arc();
   arc.startAngle = (Object d, int i) => (d as Map)["x"];
   arc.endAngle = (Object d, int i) => (d as Map)["x"] + (d as Map)["dx"];
   arc.innerRadius = (Object d, int i) => Math.sqrt((d as Map)["y"]);
@@ -30,58 +35,68 @@ void main() {
   
   d3.json("flare.json").then((Object root) {
     svg.datum = root;
-    var path = svg.selectAll("path").dataFunc(partition.nodes);
-    var append = path.enter.append("path");
+    var path1 = svg.selectAll("path").dataFunc(partition.nodes);
+    path = path1.enter.append("path");
     
-    append.attrFunc("display", (d, i) { // hide inner ring
+    path.attrFunc("display", (d, i) { // hide inner ring
       if (d["depth"] > 0) {
         return "";
       }
       return "none";
     });
     
-    append.attrFunc("d", arc);
-    append.style.stroke = (d, i) => "#FFF";
-    append.style.fill = (Map d, i) {
+    path.attrFunc("d", arc);
+    path.style.stroke = (d, i) => "#FFF";
+    path.style.fill = (Map d, i) {
       if ((d["children"] == null) || (d["children"].isEmpty)) {
         d = d["parent"];
       }
       return "#${color(d["name"]).toRadixString(16)}";
     };
-    append.style.fillRule = (d, i) => "evenodd";
+    path.style.fillRule = (d, i) => "evenodd";
     
-    //.style("fill", function(d) { return color((d.children ? d : d.parent).name); })
 
     /*
-     * .style("fill-rule", "evenodd")
       .each(stash);
      */
     
+    
+    for (Element elmt in querySelectorAll("input")) {
+      elmt.onChange.listen(onChange);
+    }
   });
+}
+
+void onChange(Event evt) {
+  var value;
   
+  if ((evt.target as InputElement).value == "count") {
+    value = (Object d, int depth) => 1;
+  } else {
+    value = (Object d, int depth) => (d as Map)["size"];
+  }
+  
+  partition.value = value;
+  d3.BoundSelection bound = path.dataFunc(partition.nodes);
+  bound.attrFunc("d", arc);
+  //bound.attrFunc("d", )
+  
+  return;
+  /*
+  var value = this.value === "count"
+      ? function() { return 1; }
+  : function(d) { return d.size; };
+
+  path
+  .data(partition.value(value).nodes)
+    .transition()
+      .duration(1500)
+        .attrTween("d", arcTween);
+        */
+}
   /*
 
-var partition = d3.layout.partition()
-    .sort(null)
-    .size([2 * Math.PI, radius * radius])
-    .value(function(d) { return 1; });
-  
-var arc = d3.svg.arc()
-    .startAngle(function(d) { return d.x; })
-    .endAngle(function(d) { return d.x + d.dx; })
-    .innerRadius(function(d) { return Math.sqrt(d.y); })
-    .outerRadius(function(d) { return Math.sqrt(d.y + d.dy); });
-
 d3.json("flare.json", function(error, root) {
-  var path = svg.datum(root).selectAll("path")
-      .data(partition.nodes)
-    .enter().append("path")
-      .attr("display", function(d) { return d.depth ? null : "none"; }) // hide inner ring
-      .attr("d", arc)
-      .style("stroke", "#fff")
-      .style("fill", function(d) { return color((d.children ? d : d.parent).name); })
-      .style("fill-rule", "evenodd")
-      .each(stash);
 
   d3.selectAll("input").on("change", function change() {
     var value = this.value === "count"
@@ -115,4 +130,3 @@ function arcTween(a) {
 
 d3.select(self.frameElement).style("height", height + "px");
 */
-}
