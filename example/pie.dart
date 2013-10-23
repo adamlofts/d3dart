@@ -25,10 +25,6 @@ void main() {
   pie.value = (Map d) => d["population"];
   
   d3.csv("pie.csv").then((List data) {
-    data.forEach((Map d) {
-      d["population"] = double.parse(d["population"]);
-    });
-  
     var g = svg.selectAll(".arc")
         .data(pie(data))
         .enter.append("g");
