@@ -11,6 +11,10 @@ class Ordinal {
   
   Map<Object, int> _index = {};
   
+  Ordinal({ List range }) {
+    _range = range;
+  }
+  
   List get range => _range;
   
   void set range(List value) {

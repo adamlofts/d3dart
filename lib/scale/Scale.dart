@@ -13,7 +13,11 @@ class Scale {
       return "${d}${suffix}";
     };
   }
-  
+
+  /*
+   * This product includes color specifications and designs developed by Cynthia
+   * Brewer (http://colorbrewer.org/). See lib/colorbrewer for more information.
+   */
   static final List<int> _category10 = [
     0x1f77b4, 0xff7f0e, 0x2ca02c, 0xd62728, 0x9467bd,
     0x8c564b, 0xe377c2, 0x7f7f7f, 0xbcbd22, 0x17becf
@@ -47,45 +51,13 @@ class Scale {
     0x756bb1, 0x9e9ac8, 0xbcbddc, 0xdadaeb,
     0x636363, 0x969696, 0xbdbdbd, 0xd9d9d9
   ];
-  
-  static Ordinal get category20c {
-    Ordinal ordinal = new Ordinal();
-    ordinal.range = _category20c;
-    return ordinal;
-  }
+
+  static Ordinal get category10 => new Ordinal(range: _category10);
+  static Ordinal get category20 => new Ordinal(range: _category20);
+  static Ordinal get category20b => new Ordinal(range: _category20b);
+  static Ordinal get category20c => new Ordinal(range: _category20c);
   
   static Ordinal ordinal() {
     return new Ordinal();
   }
 }
-
-/*
- * This product includes color specifications and designs developed by Cynthia
- * Brewer (http://colorbrewer.org/). See lib/colorbrewer for more information.
- */
-/*
-d3.scale.category10 = function() {
-  return d3.scale.ordinal().range(d3_category10);
-};
-
-d3.scale.category20 = function() {
-  return d3.scale.ordinal().range(d3_category20);
-};
-
-d3.scale.category20b = function() {
-  return d3.scale.ordinal().range(d3_category20b);
-};
-
-d3.scale.category20c = function() {
-  return d3.scale.ordinal().range(d3_category20c);
-};
-
-var d3_category10 = [
-  
-].map(d3_rgbString);
-
-var d3_category20 = [
-  
-].map(d3_rgbString);
-
-*/
