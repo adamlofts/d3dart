@@ -6,7 +6,7 @@ class Ordinal {
   List _domain = [];
   
   List _range;
-  int _rangeBand;
+  int rangeBand;
   Map _ranger;
   
   Map<Object, int> _index = {};
@@ -19,8 +19,25 @@ class Ordinal {
   
   void set range(List value) {
     _range = value;
-    _rangeBand = 0;
+    rangeBand = 0;
     _ranger = {"t": "range", "a": []};
+  }
+  
+  void set domain(List x) {
+    _domain = [];
+    _index = {};
+    var i = -1, n = x.length, xi;
+    while (++i < n) {
+      if (!_index.containsKey(xi = x[i])) {
+        _domain.add(xi);
+        _index[xi] = _domain.length;
+      }
+    }
+    if (_ranger["t"] == "range") {
+      range = _ranger["a"][0];
+    } else {
+      rangeRoundBands(_ranger["a"][0], padding: _ranger["a"][1], outerPadding: _ranger["a"][2]);
+    }
   }
   
   Object call(Object x) {
@@ -31,6 +48,34 @@ class Ordinal {
       _index[x] = index;
     }
     return _range[(index - 1) % _range.length];
+  }
+  
+  void rangeRoundBands(List x, { num padding: 0, num outerPadding }) {
+    if (outerPadding == null) {
+      outerPadding = padding;
+    }
+    var reverse = x[1] < x[0],
+        start,
+        stop;
+    if (reverse) {
+        start = x[1];
+        stop = x[0];
+    } else {
+        start = x[0];
+        stop = x[1];
+    }
+    var step = ((stop - start) / (_domain.length - padding + 2 * outerPadding)).floor(),
+        error = stop - start - (_domain.length - padding) * step;
+    _range = _steps(start + (error / 2).round(), step);
+    if (reverse) {
+      _range = _range.reversed.toList();
+    }
+    rangeBand = (step * (1 - padding)).round();
+    _ranger = {"t": "rangeRoundBands", "a": [x, padding, outerPadding]};
+  }
+  
+  List _steps(start, step) {
+    return d3range(_domain.length).map((i) => start + step * i).toList();
   }
 }
 

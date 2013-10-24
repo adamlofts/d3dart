@@ -11,6 +11,8 @@ void main() {
   
   //var formatPercent = d3.format(".0%");
   
+  d3.Ordinal x = new d3.Ordinal();
+  x.rangeRoundBands([0, width], padding: 0.1);
   /**
    * var formatPercent = d3.format(".0%");
 
@@ -58,8 +60,8 @@ var yAxis = d3.svg.axis()
   svg.attr("transform", "translate(${margin["left"]},${margin["top"]})");
   
   d3.tsv("bar.tsv").then((List data) {
+    x.domain = data.map((Map d) => d["letter"]).toList();
     /*
-     * x.domain(data.map(function(d) { return d.letter; }));
   y.domain([0, d3.max(data, function(d) { return d.frequency; })]);
      */
     print(data);
@@ -69,9 +71,10 @@ var yAxis = d3.svg.axis()
     .enter.append("rect");
     
     rect.attr("class", "bar");
-    rect.attrFunc("x", (d,i) => i * 20);
-
-    rect.attrFunc("width", (d,i) => /* x.rangeBand() */ "20");
+    
+    rect.attrFunc("x", (d,i) => x((d as Map)["letter"]));
+    rect.attrFunc("width", (d,i) => x.rangeBand);
+    
     rect.attrFunc("y", (d,i) => /* y( */ (d as Map)["frequency"]);
     rect.attrFunc("height", (d,i) => height - (d as Map)["frequency"]);
 
