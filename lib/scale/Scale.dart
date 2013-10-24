@@ -1,29 +1,7 @@
 
 part of D3Dart;
 
-class LinearScale {
-  List domain;
-  List range;
-  String suffix;
-  
-  LinearScale({ List this.domain, List this.range, String this.suffix: "px" });
-  
-  String call(dynamic d, int i) {
-    if (domain != null) {
-      d = (d - domain[0]) / domain[1];
-    }
-    if (range != null) {
-      d = d * (range[1] - range[0]);
-    }
-    return "${d}${suffix}";
-  }
-}
-
 class Scale {
-  static LinearScale linear({List domain, List range, String suffix: "px"}) {
-    return new LinearScale(domain: domain, range: range, suffix: suffix);
-  }
-
   /*
    * This product includes color specifications and designs developed by Cynthia
    * Brewer (http://colorbrewer.org/). See lib/colorbrewer for more information.

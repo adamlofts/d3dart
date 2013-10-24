@@ -27,7 +27,7 @@ class PieLayout {
     var k = (endAngle - a) / sum(values);
     
     // FIXME: Optionally sort the data.
-    var index = range(_data.length);
+    var index = d3range(_data.length);
     /*
      * var index = d3.range(data.length);
     if (sort != null) index.sort(sort === d3_layout_pieSortByValue

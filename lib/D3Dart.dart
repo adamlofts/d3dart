@@ -10,8 +10,12 @@ import 'dart:convert';
 
 part 'Selection.dart';
 
+part 'interpolate/Interpolate.dart';
+
+part 'scale/Bilinear.dart';
 part 'scale/Ordinal.dart';
 part 'scale/Scale.dart';
+part 'scale/LinearScale.dart';
 
 part 'layout/Layout.dart';
 part 'layout/PieLayout.dart';
@@ -26,7 +30,7 @@ const num HALF_PI = Math.PI / 2; // halfπ in d3
 const num EPSILON = 1e-6; // ε in d3
 const num EPSILON_SQD = EPSILON * EPSILON; // ε2 in d3
 
-typedef String PropertyFunction(dynamic d, int i);
+typedef Object PropertyFunction(dynamic d, int i);
 typedef Object KeyFunction(dynamic d, int i);
 typedef EachFunction(Element elmt, dynamic d, int i, [int j]);
 
@@ -41,13 +45,19 @@ Selection select(String selector) {
 
 Selection selectAll(String selector) {
   _Group group = new _Group();
-  group.addAll(queryAll(selector));
+  group.addAll(querySelectorAll(selector));
   return new Selection(null, [group]);
 }
 
-num max(Iterable<Object> data) {
-  num v = data.first;
-  for (num v1 in data) {
+num max(Iterable<Object> data, { num f (Object): null }) {
+  var v = data.first;
+  if (f != null) {
+    v = f(v);
+  }
+  for (var v1 in data) {
+    if (f != null) {
+      v1 = f(v1);
+    }
     if (v1 > v) {
       v = v1;
     }
