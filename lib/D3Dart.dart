@@ -22,8 +22,9 @@ part 'layout/PieLayout.dart';
 part 'layout/HierarchyLayout.dart';
 part 'layout/PartitionLayout.dart';
 
+part 'svg/Arc.dart';
+
 part 'CSV.dart';
-part 'SVG.dart';
 
 const num TWO_PI = Math.PI * 2; // τ in d3
 const num HALF_PI = Math.PI / 2; // halfπ in d3
