@@ -39,6 +39,10 @@ class Selection {
   
   Selection(Selection this._parent, List<List<Element>> this._groups);
   
+  factory Selection.copy(Selection s) {
+    return s.selectFunc((Element elmt, dynamic d, int i, [int j]) => elmt);
+  }
+  
   int get length {
     return _groups.length;
   }
@@ -263,6 +267,10 @@ class Selection {
     });
   }
   
+  void call(Function f) {
+    f(this);
+  }
+  
   Selection get transition {
     /*
       var id = d3_transitionInheritId || ++d3_transitionId,
@@ -397,4 +405,8 @@ class _SelectionStyle {
   void set fill(PropertyFunction f) => setProperty("fill", f);
   void set fillRule(PropertyFunction f) => setProperty("fill-rule", f);
   void set stroke(PropertyFunction f) => setProperty("stroke", f);
+  
+  void set textAnchorConst(String v) {
+    textAnchor = (d, i) => v;
+  }
 }

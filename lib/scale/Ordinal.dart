@@ -23,6 +23,10 @@ class Ordinal {
     _ranger = {"t": "range", "a": []};
   }
   
+  List get domain {
+    return _domain;
+  }
+  
   void set domain(List x) {
     _domain = [];
     _index = {};

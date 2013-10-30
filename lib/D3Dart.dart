@@ -23,6 +23,7 @@ part 'layout/HierarchyLayout.dart';
 part 'layout/PartitionLayout.dart';
 
 part 'svg/Arc.dart';
+part 'svg/Axis.dart';
 
 part 'CSV.dart';
 
@@ -35,13 +36,16 @@ typedef Object PropertyFunction(dynamic d, int i);
 typedef Object KeyFunction(dynamic d, int i);
 typedef EachFunction(Element elmt, dynamic d, int i, [int j]);
 
-Selection select(String selector) {
+Selection selectElement(Element elmt) {
   _Group group = new _Group();
-  Element elmt = query(selector);
   if (elmt != null) {
     group.add(elmt);
   }
   return new Selection(null, [group]);
+}
+
+Selection select(String selector) {
+  return selectElement(querySelector(selector));
 }
 
 Selection selectAll(String selector) {

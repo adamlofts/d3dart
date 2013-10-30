@@ -72,7 +72,10 @@ void main() {
     Selection sel = selection.enter;
     sel.append("div");
     
-    Scale.linear(domain: [0, max(data)], range: [0, 420]);
+    LinearScale scale = new LinearScale();
+    scale.domain = [0, max(data)];
+    scale.range = [0, 420];
+    
     sel.style.width = (d, i) => "${d * 10}px";
     sel.style.height = (d, i) => "20px";
     sel.textFunc = (d, i) => "${d}";

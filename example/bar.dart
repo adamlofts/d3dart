@@ -14,6 +14,10 @@ void main() {
   d3.LinearScale y = new d3.LinearScale();
   y.range = [height, 0];
   
+  d3.Axis xAxis = new d3.Axis();
+  xAxis.scale = x;
+  xAxis.orient = "bottom";
+  
   /**
    * var formatPercent = d3.format(".0%");
 
@@ -62,6 +66,10 @@ var yAxis = d3.svg.axis()
 
     //rect.attr("height", function(d) { return height - y(d.frequency); });
     
+    var xaxis = svg.append("g");
+    xaxis.attr("class", "x axis");
+    xaxis.attr("transform", "translate(0,${height})");
+    xaxis.call(xAxis);
   });
 }
 
