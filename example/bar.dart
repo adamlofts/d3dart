@@ -44,6 +44,14 @@ void main() {
     yaxis.attr("class", "y axis");
     yaxis.call(yAxis);
     
+    var label = yaxis.append("text")
+      ..attr("transform", "rotate(-90)")
+      ..attr("y", 6)
+      ..attr("dy", ".71em");
+    
+    label.text = "Frequency";
+    label.style.textAnchorConst = "end";
+    
    /*/svg.append("g")
     //  .attr("class", "y axis")
     //  .call(yAxis)

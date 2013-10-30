@@ -42,6 +42,8 @@ class LinearScale extends Scale {
     _input = linear(_range, _domain, uninterpolate, _interpolateNumber);
   }
   
+  List get range => _range;
+  
   void set range(List value) {
     _range = value;
     _rescale();
@@ -81,8 +83,63 @@ class LinearScale extends Scale {
 //    extent[2] = step;
     return extent;
   }
+  
+  void nice([m]) {
+    d3_scale_linearNice(domain, m);
+    _rescale();
+  }
+  
+  List d3_scale_linearNice(domain, m) {
+    return d3_scale_nice(domain, d3_scale_niceStep(d3_scale_linearTickRange(domain, m)[2]));
+  }
 }
 
+List d3_scale_nice(domain, nice) {
+  var i0 = 0,
+      i1 = domain.length - 1,
+      x0 = domain[i0],
+      x1 = domain[i1],
+      dx;
+
+  if (x1 < x0) {
+    dx = i0;
+    i0 = i1;
+    i1 = dx;
+    dx = x0;
+    x0 = x1;
+    x1 = dx;
+  }
+
+  domain[i0] = nice["floor"](x0);
+  domain[i1] = nice["ceil"](x1);
+  return domain;
+}
+
+Map d3_scale_niceStep(step) {
+  if (step != null) {
+    return {
+      "floor": (x) { return (x / step).floor() * step; },
+      "ceil": (x) { return (x / step).ceil() * step; }
+    };
+  }
+  return d3_scale_niceIdentity;
+}
+
+var d3_scale_niceIdentity = {
+  "floor": (x) => x,
+  "ceil": (x) => x
+};
+
+/*
+ * 
+ * 
+
+var d3_scale_niceIdentity = {
+  floor: d3_identity,
+  ceil: d3_identity
+};
+
+ */
 /*
 d3.scale.linear = function() {
   return d3_scale_linear([0, 1], [0, 1], d3_interpolate, false);

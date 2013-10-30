@@ -10,6 +10,8 @@ import 'dart:convert';
 
 part 'Selection.dart';
 
+part 'arrays/Extent.dart';
+
 part 'interpolate/Interpolate.dart';
 
 part 'scale/Bilinear.dart';

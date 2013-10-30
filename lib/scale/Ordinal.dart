@@ -81,6 +81,10 @@ class Ordinal extends Scale {
   List _steps(start, step) {
     return d3range(_domain.length).map((i) => start + step * i).toList();
   }
+  
+  List rangeExtent() {
+    return d3_scaleExtent(_range);
+  }
 }
 
 

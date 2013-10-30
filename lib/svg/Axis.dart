@@ -43,7 +43,7 @@ class Axis {
         /*if (scale1.tickFormat) {
           
         } else {*/
-        tickFormatFunc = (d, int i) => d; 
+        tickFormatFunc = (d, int i) => d.toString(); 
         //}
       }
       // Ticks, or domain values for ordinal scales.
@@ -61,12 +61,13 @@ class Axis {
       tickEnter.attr("class", "tick");
       var tickTransform;
       
-/*
       // Domain.
       var range = d3_scaleRange(scale1),
           path = g.selectAll(".domain").data([0]),
-          pathUpdate = (path.enter().append("path").attr("class", "domain"), d3.transition(path));
-*/
+          pathUpdate = path.enter.append("path");
+          
+      pathUpdate.attr("class", "domain");
+      // pathUpdate
       tickEnter.append("line");
       tickEnter.append("text");
 
@@ -88,7 +89,7 @@ class Axis {
         textUpdate.attr("y", Math.max(innerTickSize, 0) + tickPadding);
         text.attr("dy", ".71em");
         text.style.textAnchorConst = "middle";
-        //pathUpdate.attr("d", "M" + range[0] + "," + outerTickSize + "V0H" + range[1] + "V" + outerTickSize);
+        pathUpdate.attr("d", "M${range[0]},${outerTickSize}V0H${range[1]}V${outerTickSize}");
       } else if (orient == "top") {
         tickTransform = d3_svg_axisX;
         lineEnter.attr("y2", -innerTickSize);
@@ -110,7 +111,7 @@ class Axis {
         textUpdate.attr("y", 0);
         text.attr("dy", ".32em");
         text.style.textAnchorConst = "end";
-//        pathUpdate.attr("d", "M" + -outerTickSize + "," + range[0] + "H0V" + range[1] + "H" + -outerTickSize);
+        pathUpdate.attr("d", "M${-outerTickSize},${range[0]}H0V${range[1]}H${-outerTickSize}");
       } else {
         tickTransform = d3_svg_axisY;
         lineEnter.attr("x2", innerTickSize);
@@ -121,7 +122,7 @@ class Axis {
         textUpdate.attr("y", 0);
         text.attr("dy", ".32em");
         text.style.textAnchorConst = "start";
-        //pathUpdate.attr("d", "M" + outerTickSize + "," + range[0] + "H0V" + range[1] + "H" + outerTickSize);
+        pathUpdate.attr("d", "M${outerTickSize},${range[0]}H0V${range[1]}H${outerTickSize}");
       }
 
       // For ordinal scales:
