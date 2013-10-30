@@ -1,7 +1,20 @@
 
 part of D3Dart;
 
-class LinearScale {
+List d3_scaleExtent(domain) {
+  var start = domain[0], stop = domain[domain.length - 1];
+  if (start < stop) { return [start, stop]; }
+  return [stop, start];
+}
+
+List d3_scaleRange(scale) {
+  if (scale is Ordinal) {
+    return scale.rangeExtent();
+  }
+  return d3_scaleExtent(scale.range);
+}
+
+class LinearScale extends Scale {
   List _domain = [0, 1];
   List _range = [0, 1];
   dynamic _interpolate = _interpolateNumber;
@@ -39,7 +52,35 @@ class LinearScale {
     _rescale();
   }
   
+  List get domain => _domain;
   
+  List ticks(int m) => d3_scale_linearTicks(domain, m);
+  
+  List d3_scale_linearTicks(domain, m) {
+    List r = d3_scale_linearTickRange(domain, m);
+    return d3range(r[1], start: r[0], step: r[2]);
+  }
+  
+  List d3_scale_linearTickRange(domain, m) {
+    if (m == null) m = 10;
+
+    var extent = d3_scaleExtent(domain),
+        span = extent[1] - extent[0],
+        step = Math.pow(10, (Math.log(span / m) / Math.LN10).floor()),
+        err = m / span * step;
+
+    // Filter ticks to get closer to the desired count.
+    if (err <= .15) step *= 10;
+    else if (err <= .35) step *= 5;
+    else if (err <= .75) step *= 2;
+
+    // Round start and stop values to step interval.
+    extent[0] = (extent[0] / step).ceil() * step;
+    extent[1] = (extent[1] / step).floor() * step + step * .5; // inclusive
+    extent.add(step);
+//    extent[2] = step;
+    return extent;
+  }
 }
 
 /*

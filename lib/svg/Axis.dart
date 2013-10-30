@@ -3,7 +3,8 @@ part of D3Dart;
 
 class Axis {
   
-  Ordinal scale;
+  Scale scale;
+  
   String orient = "bottom";
   num innerTickSize = 6,
       outerTickSize = 6,
@@ -11,7 +12,7 @@ class Axis {
  
   List tickArguments_ = [10];
   var tickValues = null;
-  var _tickFormat;
+  var tickFormat;
   
   String call(Selection g) {
     g.each((Element elmt, dynamic d, int i, [int j]) {
@@ -23,17 +24,26 @@ class Axis {
       
       var scale1 = scale;
       
-      var ticks = scale1.domain;
+      var ticks;
+      if (tickValues != null) {
+        ticks = tickValues;
+      } else {
+        if (scale is LinearScale) {
+          ticks = (scale as LinearScale).ticks(tickArguments_[0]);
+        } else {
+          ticks = scale1.domain;
+        } 
+      }
       BoundSelection tick = g.selectAll(".tick").data(ticks/*, key: scale1 */);
 
-      var tickFormat; 
-      if (_tickFormat != null) {
-        tickFormat = _tickFormat;
+      var tickFormatFunc; 
+      if (tickFormat != null) {
+        tickFormatFunc = tickFormat;
       } else {
         /*if (scale1.tickFormat) {
           
         } else {*/
-          tickFormat = (d, int i) => d; 
+        tickFormatFunc = (d, int i) => d; 
         //}
       }
       // Ticks, or domain values for ordinal scales.
@@ -63,7 +73,7 @@ class Axis {
       var lineEnter = tickEnter.select("line"),
           lineUpdate = tickUpdate.select("line"),
           text = tickEnter.select("text"); // FIXME: tick.select("text")
-      text.textFunc = tickFormat;
+      text.textFunc = tickFormatFunc;
       var textEnter = tickEnter.select("text"),
         textUpdate = tickUpdate.select("text");
 
@@ -114,29 +124,28 @@ class Axis {
         //pathUpdate.attr("d", "M" + outerTickSize + "," + range[0] + "H0V" + range[1] + "H" + outerTickSize);
       }
 
-      /*
       // For ordinal scales:
       // - any entering ticks are undefined in the old scale
       // - any exiting ticks are undefined in the new scale
       // Therefore, we only need to transition updating ticks.
-      if (scale1.rangeBand) {
-      */
+      if (scale1 is Ordinal) {
         num dx = scale1.rangeBand / 2;
         Function x = (d) => scale1(d) + dx;
         tickTransform(tickEnter, x);
         tickTransform(tickUpdate, x);
-        /*
       }
 
       // For quantitative scales:
       // - enter new ticks from the old scale
       // - exit old ticks to the new scale
       else {
-        tickEnter.call(tickTransform, scale0);
-        tickUpdate.call(tickTransform, scale1);
-        tickExit.call(tickTransform, scale1);
+        tickTransform(tickEnter, scale1);
+
+        //tickEnter.call(tickTransform, scale0);
+        tickTransform(tickUpdate, scale1);
+        //tickUpdate.call(tickTransform, scale1);
+        //tickExit.call(tickTransform, scale1);
       }
- */
     });
   }
   
@@ -145,6 +154,6 @@ class Axis {
   }
   
   Function d3_svg_axisY(selection, y) {
-    selection.attrFunc("transform", (d, i) => "translate(${y(d)},0)");
+    selection.attrFunc("transform", (d, i) => "translate(0, ${y(d)})");
   }
 }

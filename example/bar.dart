@@ -6,7 +6,7 @@ void main() {
       width = 960 - margin["left"] - margin["right"],
       height = 500 - margin["top"] - margin["bottom"];
   
-  //var formatPercent = d3.format(".0%");
+  var formatPercent = (d, i) => "${((d as num) * 100).toStringAsFixed(0)}%"; //d3.format(".0%");
   
   d3.Ordinal x = new d3.Ordinal();
   x.rangeRoundBands([0, width], padding: 0.1);
@@ -18,25 +18,11 @@ void main() {
   xAxis.scale = x;
   xAxis.orient = "bottom";
   
-  /**
-   * var formatPercent = d3.format(".0%");
-
-var x = d3.scale.ordinal()
-    .rangeRoundBands([0, width], .1);
-
-var y = d3.scale.linear()
-    .range([height, 0]);
-
-var xAxis = d3.svg.axis()
-    .scale(x)
-    .orient("bottom");
-
-var yAxis = d3.svg.axis()
-    .scale(y)
-    .orient("left")
-    .tickFormat(formatPercent);
-    
-   */
+  d3.Axis yAxis = new d3.Axis();
+  yAxis.scale = y;
+  yAxis.orient = "left";
+  yAxis.tickFormat = formatPercent;
+//  .tickFormat(formatPercent);
   
   var svg = d3.select("body").append("svg");
   
@@ -48,6 +34,26 @@ var yAxis = d3.svg.axis()
   d3.tsv("bar.tsv").then((List data) {
     x.domain = data.map((Map d) => d["letter"]).toList();
     y.domain = [0, d3.max(data, f: (d) => d["frequency"])];
+
+    var xaxis = svg.append("g");
+    xaxis.attr("class", "x axis");
+    xaxis.attr("transform", "translate(0,${height})");
+    xaxis.call(xAxis);
+    
+    var yaxis = svg.append("g");
+    yaxis.attr("class", "y axis");
+    yaxis.call(yAxis);
+    
+   /*/svg.append("g")
+    //  .attr("class", "y axis")
+    //  .call(yAxis)
+    //.append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("Frequency");
+    */
     
     var rect = svg.selectAll(".bar")
       .data(data)
@@ -58,18 +64,8 @@ var yAxis = d3.svg.axis()
     rect.attrFunc("x", (d,i) => x((d as Map)["letter"]));
     rect.attrFunc("width", (d,i) => x.rangeBand);
     
-   // .attr("y", function(d) { return y(d.frequency); })
-   //   .attr("height", function(d) { return height - y(d.frequency); });
-    
     rect.attrFunc("y", (d,i) => y((d as Map)["frequency"]));
     rect.attrFunc("height", (d,i) => height - y((d as Map)["frequency"]));
-
-    //rect.attr("height", function(d) { return height - y(d.frequency); });
-    
-    var xaxis = svg.append("g");
-    xaxis.attr("class", "x axis");
-    xaxis.attr("transform", "translate(0,${height})");
-    xaxis.call(xAxis);
   });
 }
 

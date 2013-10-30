@@ -89,10 +89,10 @@ num sum(Iterable<Object> data) {
  * smallest start + i * step greater than stop. If the returned array would contain an infinite number of values,
  * an error is thrown rather than causing an infinite loop.
  */
-List<int> d3range(int stop, { int start: 0, int step: 1 }) {
-  List<int> ret = new List<int>(stop);
-  for (int i = 0; i < stop; i += 1) {
-    ret[i] = i;
+List<num> d3range(num stop, { num start: 0, num step: 1 }) {
+  List<num> ret = new List<num>();
+  for (num v = start; v < stop; v += step) {
+    ret.add(v);
   }
   return ret;
 }

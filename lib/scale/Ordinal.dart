@@ -1,7 +1,7 @@
 
 part of D3Dart;
 
-class Ordinal {
+class Ordinal extends Scale {
   
   List _domain = [];
   
