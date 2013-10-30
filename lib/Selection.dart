@@ -409,4 +409,8 @@ class _SelectionStyle {
   void set textAnchorConst(String v) {
     textAnchor = (d, i) => v;
   }
+  
+  void set fillConst(String v) {
+    fill = (d, i) => v;
+  }
 }

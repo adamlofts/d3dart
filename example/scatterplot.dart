@@ -80,26 +80,26 @@ void main() {
 
     circle.style.fill = (d, i) => "#${color(d["species"]).toRadixString(16)}";
   
-    /*
     var legend = svg.selectAll(".legend")
-        .data(color.domain())
-      .enter().append("g")
-        .attr("class", "legend")
-        .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+        .data(color.domain)
+      .enter.append("g");
+    
+    legend
+        ..attr("class", "legend")
+        ..attrFunc("transform", (d, i) => "translate(0,${i * 20})");
   
     legend.append("rect")
-        .attr("x", width - 18)
-        .attr("width", 18)
-        .attr("height", 18)
-        .style("fill", color);
+        ..attr("x", width - 18)
+        ..attr("width", 18)
+        ..attr("height", 18)
+        ..style.fill = (d, i) => "#${color(d).toRadixString(16)}";
   
-    legend.append("text")
-        .attr("x", width - 24)
-        .attr("y", 9)
-        .attr("dy", ".35em")
-        .style("text-anchor", "end")
-        .text(function(d) { return d; });
-  */
+    var lt = legend.append("text")
+        ..attr("x", width - 24)
+        ..attr("y", 9)
+        ..attr("dy", ".35em");
     
+    lt.style.textAnchorConst = "end";
+    lt.textFunc = (d, i) => d;
   });
 }
