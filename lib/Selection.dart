@@ -259,9 +259,17 @@ class Selection {
     return this.node == null;
   }
   
+  static final Set HTML_TAGS = new Set.from(const ["div"]);
+  
   Selection append(String tag) {
+    bool is_html = HTML_TAGS.contains(tag);
     return selectFunc((Element elmt, dynamic d, int i, [int j]) {
-      Element child = new SvgElement.tag(tag);
+      Element child;
+      if (is_html) {
+        child = new Element.tag(tag);
+      } else {
+        child = new SvgElement.tag(tag);
+      }
       elmt.append(child);
       return child;
     });
@@ -405,6 +413,9 @@ class _SelectionStyle {
   void set fill(PropertyFunction f) => setProperty("fill", f);
   void set fillRule(PropertyFunction f) => setProperty("fill-rule", f);
   void set stroke(PropertyFunction f) => setProperty("stroke", f);
+  void set position(PropertyFunction f) => setProperty("position", f);
+  void set left(PropertyFunction f) => setProperty("left", f);
+  void set top(PropertyFunction f) => setProperty("top", f);
   
   void set textAnchorConst(String v) {
     textAnchor = (d, i) => v;
@@ -412,5 +423,25 @@ class _SelectionStyle {
   
   void set fillConst(String v) {
     fill = (d, i) => v;
+  }
+  
+  void set positionConst(String v) {
+    position = (d, i) => v;
+  }
+  
+  void set widthConst(String v) {
+    width = (d, i) => v;
+  }
+  
+  void set heightConst(String v) {
+    height = (d, i) => v;
+  }
+  
+  void set leftConst(String v) {
+    left = (d, i) => v;
+  }
+  
+  void set topConst(String v) {
+    top = (d, i) => v;
   }
 }

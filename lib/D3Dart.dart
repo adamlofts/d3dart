@@ -23,6 +23,7 @@ part 'layout/Layout.dart';
 part 'layout/PieLayout.dart';
 part 'layout/HierarchyLayout.dart';
 part 'layout/PartitionLayout.dart';
+part 'layout/TreemapLayout.dart';
 
 part 'svg/Arc.dart';
 part 'svg/Axis.dart';
