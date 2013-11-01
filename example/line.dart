@@ -16,14 +16,14 @@ void main() {
 //  var x = d3.time.scale()
   
   var x = new d3.LinearScale();
-  x.range = [height, 0];
+  x.range = [width, 0];
   
   var xAxis = new d3.Axis();
   xAxis.scale = x;
   xAxis.orient = "bottom";
   
   var y = new d3.LinearScale();
-  y.range = [0, width];
+  y.range = [height, 0];
   
   var yAxis = new d3.Axis();
   yAxis.scale = y;
@@ -44,7 +44,7 @@ void main() {
   
   d3.tsv("line.tsv").then((List data) {
     data.forEach((Map d) {
-      d["date"] = df.parse(d["date"]).millisecondsSinceEpoch;
+      d["date"] = df.parse(d["date"]).millisecondsSinceEpoch.abs();
 //    d.date = parseDate(d.date);
 //    d.close = +d.close;
   });
