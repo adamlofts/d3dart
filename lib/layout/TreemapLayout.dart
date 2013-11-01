@@ -62,6 +62,7 @@ class TreemapLayout {
           _area[row] = 0;
           best = double.INFINITY;
         }
+        print("DART SCORE ${score}");
       }
       if (row.length > 0) {
         position(row, u, rect, true);
@@ -73,19 +74,20 @@ class TreemapLayout {
   }
   
   void stickify(node) {
-    var children = node.children;
-    if (children && children.length) {
+    List children = node["children"];
+    if ((children != null) && (children.length > 0)) {
       var rect = pad(node),
-          remaining = children.slice(), // copy-on-write
+          remaining = children.sublist(0), // copy-on-write
           child,
           row = [];
       scale(remaining, rect["dx"] * rect["dy"] / node["value"]);
       _area[row] = 0;
-      while (child = remaining.pop()) {
+      while (remaining.length > 0) {
+        child = remaining.removeLast();
         row.add(child);
         _area[row] += _area[child];
-        if (child.z != null) {
-          position(row, child.z ? rect["dx"] : rect["dy"], rect, !remaining.length);
+        if (child["z"] != null) {
+          position(row, (child["z"] != 0) ? rect["dx"] : rect["dy"], rect, remaining.length == 0);
           row.clear();
           _area[row] = 0;
         }
@@ -102,7 +104,10 @@ class TreemapLayout {
         i = -1,
         n = row.length;
     while (++i < n) {
-      if ((r = _area[row[i]]) != 0) continue;
+      r = _area[row[i]];
+      if (r == 0) {
+        continue;
+      }
       if (r < rmin) rmin = r;
       if (r > rmax) rmax = r;
     }
@@ -128,7 +133,7 @@ class TreemapLayout {
         o["x"] = x;
         o["y"] = y;
         o["dy"] = v;
-        x += o["dx"] = Math.min(rect["x"] + rect["dx"] - x, v ? round(_area[o] / v) : 0);
+        x += o["dx"] = Math.min(rect["x"] + rect["dx"] - x, (v != 0) ? round(_area[o] / v) : 0);
       }
       o["z"] = true;
       o["dx"] += rect["x"] + rect["dx"] - x; // rounding error

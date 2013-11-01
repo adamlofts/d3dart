@@ -18,8 +18,22 @@ class HierarchyLayout {
     return nodes;
   }
   
-  void revalue(Map root) {
-    throw new UnimplementedError(); 
+  num revalue(Map node, {int depth: 0}) {
+    var children = node["children"],
+        v = 0;
+        
+    if ((children != null) && (children.length > 0)) {
+      var i = -1,
+          n = children.length,
+          j = depth + 1;
+      while (++i < n) v += revalue(children[i], depth: j);
+    } else if (value != null) {
+      v = value(node, depth); // || 0;
+    }
+    if (value != null) node["value"] = v;
+    return v;
+    
+    // throw new UnimplementedError(); 
     //_revalue(root, 0);
   }
   
