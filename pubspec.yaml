@@ -2,5 +2,6 @@ name: d3dart
 description: A sample web application
 dependencies:
   browser: any
+  intl: any
 dev_dependencies:
   unittest: any
