@@ -10,8 +10,9 @@ class Line {
   var defined = (d,i) => true;
   var interpolateKey;
   num tension = 0.7;
+  var projection = (x) => x;
   
-  String call(List data) {
+  String call(List data, i) {
     var segments = [],
         points = [],
         i = -1,
@@ -21,21 +22,26 @@ class Line {
         fy = y; //d3_functor(y);
 
     var segment = () {
-      segments.add("M", interpolate(projection(points), tension));
-    }
+      segments.add("M");
+      segments.add(interpolate(projection(points), tension));
+    };
 
     while (++i < n) {
-      if (defined.call(this, d = data[i], i)) {
-        points.push([+fx.call(this, d, i), +fy.call(this, d, i)]);
+      if (defined(d = data[i], i)) {
+        points.add([fx(d, i), fy(d, i)]);
       } else if (points.length) {
         segment();
         points = [];
       }
     }
 
-    if (points.length) segment();
+    if (points.length > 0) segment();
 
-    return segments.length ? segments.join("") : null;
+    return (segments.length > 0) ? segments.join("") : null;
+  }
+  
+  static String d3_svg_lineLinear(points, tension) {
+    return points.map((p) => "${p[0]},${p[1]}").join("L");
   }
 }
 

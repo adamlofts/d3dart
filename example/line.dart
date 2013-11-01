@@ -45,7 +45,6 @@ void main() {
   d3.tsv("line.tsv").then((List data) {
     data.forEach((Map d) {
       d["date"] = df.parse(d["date"]).millisecondsSinceEpoch;
-      print(d["date"]);
 //    d.date = parseDate(d.date);
 //    d.close = +d.close;
   });
@@ -72,6 +71,6 @@ void main() {
     var path = g.append("path");
     path.datum = data;
     path.attr("class", "line");
-    path.attr("d", line);
+    path.attrFunc("d", line);
   });
 }

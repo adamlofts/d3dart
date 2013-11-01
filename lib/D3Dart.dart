@@ -27,6 +27,7 @@ part 'layout/TreemapLayout.dart';
 
 part 'svg/Arc.dart';
 part 'svg/Axis.dart';
+part 'svg/Line.dart';
 
 part 'CSV.dart';
 
