@@ -20,7 +20,7 @@ class Ordinal extends Scale {
   void set range(List value) {
     _range = value;
     rangeBand = 0;
-    _ranger = {"t": "range", "a": []};
+    _ranger = {"t": "range", "a": [value]};
   }
   
   List get domain {
@@ -39,7 +39,9 @@ class Ordinal extends Scale {
     }
     if (_ranger["t"] == "range") {
       range = _ranger["a"][0];
-    } else {
+    } else if (_ranger["t"] == "rangePoints") {
+      rangePoints(_ranger["a"][0], padding: _ranger["a"][1]);
+    } else {      
       rangeRoundBands(_ranger["a"][0], padding: _ranger["a"][1], outerPadding: _ranger["a"][2]);
     }
   }
@@ -52,6 +54,15 @@ class Ordinal extends Scale {
       _index[x] = index;
     }
     return _range[(index - 1) % _range.length];
+  }
+  
+  void rangePoints(List x, {num padding: 0}) {
+    var start = x[0],
+        stop = x[1],
+        step = (stop - start) / (Math.max(1, domain.length - 1) + padding);
+    range = _steps(domain.length < 2 ? (start + stop) / 2 : start + step * padding / 2, step);
+    rangeBand = 0;
+    _ranger = {"t": "rangePoints", "a": [x, padding]};
   }
   
   void rangeRoundBands(List x, { num padding: 0, num outerPadding }) {
