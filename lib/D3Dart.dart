@@ -31,6 +31,9 @@ part 'svg/Line.dart';
 
 part 'CSV.dart';
 
+part 'chart/LineChart.dart';
+part 'chart/PieChart.dart';
+
 const num TWO_PI = Math.PI * 2; // τ in d3
 const num HALF_PI = Math.PI / 2; // halfπ in d3
 const num EPSILON = 1e-6; // ε in d3
