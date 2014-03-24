@@ -55,7 +55,7 @@ class LineChart {
     
     var y_extent = [0, 1];
     for (List series in _data) {
-      var extents = extent(series1, (d,i) {
+      var extents = extent(series, (d,i) {
         num v = d["value"];
         if (v.isNaN || v.isInfinite) {
           v = 0;
