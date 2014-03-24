@@ -13,6 +13,8 @@ class LineChart {
   
   Map margin = {"top": 20, "right": 20, "bottom": 50, "left": 50};
 
+  Function yAxisTickFormat;
+  
   LineChart(Element this.$elmt, { int this.width, int this.height }) {
     Rectangle rect = $elmt.getBoundingClientRect();
     if (width == null) {
@@ -40,6 +42,8 @@ class LineChart {
     var yAxis = new Axis();
     yAxis.scale = y;
     yAxis.orient = "left";
+    
+    yAxis.tickFormat = yAxisTickFormat;
     
     var svg = selectElement($elmt).append("svg");
     svg.attr("width", width +  margin["left"] + margin["right"]);
@@ -84,7 +88,19 @@ class LineChart {
     gl.style.textAnchorConst = "end";
     gl.text = "CO2e (g)";
     
-    
+    var ggridlines = g.append("g");
+    ggridlines.attr("class", "ygridlines");
+    BoundSelection tick = ggridlines.selectAll(".gridline").data(y.ticks(10)/*, key: scale1 */);
+    var tickEnter = tick.enter.append("g");
+    tickEnter.attr("class", "gridline");
+    tickEnter.append("line");
+    tickEnter.attrFunc("transform", (d, i) => "translate(0, ${y(d)})");
+    var lineEnter = tickEnter.select("line");
+    //lineEnter.attr("y2", 50);
+    //lineEnter.attr("y1", 50);
+    //lineEnter.attr("x1", 0);
+    lineEnter.attr("x2", width);
+
     var line = new Line();
     line.x = (d, i) => x(d["x"]);
     line.y = (d, i) {

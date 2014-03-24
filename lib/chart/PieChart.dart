@@ -11,6 +11,9 @@ class PieChart {
   
   List _data;
   
+  num innerRadiusPercent = 0;
+  num outerRadiusPercent = 1;
+  
   PieChart(Element this.$elmt, { int this.width, int this.height }) {
     Rectangle rect = $elmt.getBoundingClientRect();
     if (width == null) {
@@ -25,8 +28,8 @@ class PieChart {
     num radius = Math.min(width, height) / 2;
     
     Arc arc = new Arc();
-    arc.outerRadiusConst = radius - 10;
-    arc.innerRadiusConst = 0;
+    arc.outerRadiusConst = (radius - 10) * outerRadiusPercent;
+    arc.innerRadiusConst = (radius - 10) * innerRadiusPercent;
     
     Selection svg = selectElement($elmt).append("svg")
         ..attr("width", width)
