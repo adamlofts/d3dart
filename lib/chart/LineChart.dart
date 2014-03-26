@@ -7,13 +7,15 @@ class LineChart {
   num width;
   num height;
   
-  Ordinal color = Scale.category10;
+  var color = Scale.category10;
   
   List _data;
   
   Map margin = {"top": 20, "right": 20, "bottom": 50, "left": 50};
 
   Function yAxisTickFormat;
+  
+  bool has_legend = false;
   
   LineChart(Element this.$elmt, { int this.width, int this.height }) {
     Rectangle rect = $elmt.getBoundingClientRect();
@@ -114,10 +116,31 @@ class LineChart {
     int index = 0;
     for (List series in _data) {
       var path = g.append("path");
+      path.attr("class", "line");
       path.datum = series;
-      path.attr("class", "line${index}");
+      
+      path.attrFunc("stroke", (d,i)=> "#${color(d.first['y']).toRadixString(16)}");
       path.attrFunc("d", line);
       index = 1;
+    }
+    
+    if (has_legend) {
+      var legend_div = selectElement($elmt).append("div");
+      legend_div.attr("class", "legend");
+      BoundSelection sel = legend_div.selectAll(".legend-item").data(_data);
+      Selection legend_item = sel.enter.append("div");
+      legend_item.attr("class", "legend-item clearfix");
+      
+      Selection legend_key = legend_item.append("div");
+      legend_key.attr("class", "legend-key");
+      legend_key.style.backgroundColor = (d, i) {
+        return "#${color(d.first['y']).toRadixString(16)}";
+      };
+
+      Selection legend_label = legend_item.append("div");
+      legend_label.textFunc = (d, i) {
+        return d.first['y'].toString();
+      };
     }
   }
   
