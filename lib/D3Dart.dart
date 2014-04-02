@@ -33,6 +33,7 @@ part 'CSV.dart';
 
 part 'chart/LineChart.dart';
 part 'chart/PieChart.dart';
+part 'chart/ColumnChart.dart';
 
 const num TWO_PI = Math.PI * 2; // τ in d3
 const num HALF_PI = Math.PI / 2; // halfπ in d3
