@@ -4,29 +4,34 @@ class PieChart {
   
   Element $elmt;
   
-  num width;
-  num height;
+  num initial_width;
+  num initial_height;
   
   var color = Scale.category10;
   
   List _data;
   
+  Map margin = { "top": 5, "right": 5, "bottom": 5, "left": 5 };
+
   num innerRadiusPercent = 0;
   num outerRadiusPercent = 1;
   
   bool has_legend = false;
   
-  PieChart(Element this.$elmt, { int this.width, int this.height }) {
+  PieChart(Element this.$elmt, { int this.initial_width, int this.initial_height }) {
     Rectangle rect = $elmt.getBoundingClientRect();
-    if (width == null) {
-      width = rect.width;
+    if (initial_width == null) {
+      initial_width = rect.width;
     }
-    if (height == null) {
-      height = rect.height;
+    if (initial_height == null) {
+      initial_height = rect.height;
     }
   }
   
   void _render() {
+    num width = initial_width - margin["left"] - margin["right"];
+    num height = initial_height - margin["top"] - margin["bottom"];
+        
     num radius = Math.min(width, height) / 2;
     
     Arc arc = new Arc();

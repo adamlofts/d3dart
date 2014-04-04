@@ -90,6 +90,8 @@ class ColumnChart extends ChartWithAxes {
   
   List _data;
   
+  bool is_stacked = true;
+  
   ColumnChart(Element this.$elmt, { int this.initial_width, int this.initial_height }) {
     Rectangle rect = $elmt.getBoundingClientRect();
     if (width == null) {
@@ -117,6 +119,24 @@ class ColumnChart extends ChartWithAxes {
     var g = svg.append("g");
     g.attr("transform", "translate(${margin["left"]},${margin["top"]})");
     
+    if (is_stacked) {
+      List last_series_total = [];
+      for (int i = 0; i < _data.first.length; i += 1) {
+        last_series_total.add(0);
+      }
+      for (List series in _data) {
+        int i = 0;
+        for (Map d in series) {
+          num v = last_series_total[i];
+          d['stack_start'] = v;
+          v += d['value'];
+          d['stack_end'] = v;
+          last_series_total[i] = v;
+          i += 1;
+        }
+      }
+    }
+    
     var series1 = _data[0];
     x.domain = series1.map((Map d) {
       return d["x"];
@@ -125,7 +145,7 @@ class ColumnChart extends ChartWithAxes {
     var y_extent = [0, 1];
     for (List series in _data) {
       var extents = extent(series, (d,i) {
-        num v = d["value"];
+        num v = d["stack_end"];
         if (v.isNaN || v.isInfinite) {
           v = 0;
         }
@@ -140,23 +160,25 @@ class ColumnChart extends ChartWithAxes {
     renderXAxis(x, g);
     renderYAxis(y, g);
     
+    int index = 0;
     for (List series in _data) {
-      var bar = g.selectAll(".bar")
+      EnterSelection bar = g.selectAll(".bar${index}")
          .data(series)
        .enter;
-      var rect = bar
-      .append("rect");
+
+      Selection rect = bar.append("rect");
       rect
-         .attr("class", "bar");
+         .attr("class", "bar${index}");
       rect
          .attrFunc("x", (d,i) { return x(d["x"]); });
       rect
          .attr("width", x.rangeBand);
       
       rect
-         .attrFunc("y", (d,i) { return y(d["value"]); });
+         .attrFunc("y", (d,i) { return y(d["stack_end"]); });
       rect
-         .attrFunc("height", (d,i) { return height - y(d["value"]); });
+         .attrFunc("height", (d,i) { return y(d["stack_start"]) - y(d["stack_end"]); });
+      index += 1;
     }
     
     renderLegend($elmt, _data, color);
