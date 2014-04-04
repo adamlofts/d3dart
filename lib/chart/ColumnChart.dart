@@ -178,6 +178,8 @@ class ColumnChart extends ChartWithAxes {
          .attrFunc("y", (d,i) { return y(d["stack_end"]); });
       rect
          .attrFunc("height", (d,i) { return y(d["stack_start"]) - y(d["stack_end"]); });
+      
+      rect.style.fill = (Object d, int i) => "#${(color((d as Map)["y"]) as int).toRadixString(16)}";
       index += 1;
     }
     
