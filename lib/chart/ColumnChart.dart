@@ -60,6 +60,7 @@ abstract class ChartWithAxes {
     if (has_legend) {
       var legend_div = selectElement($elmt).append("div");
       legend_div.attr("class", "legend");
+      legend_div.style.widthConst = "${margin['right'] - 5}px";
       BoundSelection sel = legend_div.selectAll(".legend-item").data(_data);
       Selection legend_item = sel.enter.append("div");
       legend_item.attr("class", "legend-item clearfix");
