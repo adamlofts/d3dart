@@ -1,51 +1,35 @@
 part of D3Dart;
 
-class LineChart {
+class LineChart extends ChartWithAxes {
   
   Element $elmt;
-  
-  num width;
-  num height;
   
   var color = Scale.category10;
   
   List _data;
   
-  Map margin = {"top": 20, "right": 20, "bottom": 50, "left": 50};
-
-  Function yAxisTickFormat;
+  num initial_width;
+  num initial_height;
   
-  bool has_legend = false;
-  
-  LineChart(Element this.$elmt, { int this.width, int this.height }) {
+  LineChart(Element this.$elmt, { int this.initial_width, int this.initial_height }) {
     Rectangle rect = $elmt.getBoundingClientRect();
     if (width == null) {
-      width = rect.width;
+      initial_width = rect.width;
     }
     if (height == null) {
-      height = rect.height;
+      initial_height = rect.height;
     }
   }
   
   void _render() {
-    var width = this.width - margin["left"] - margin["right"],
-        height = this.height - margin["top"] - margin["bottom"];
+    width = initial_width - margin["left"] - margin["right"];
+    height = initial_height - margin["top"] - margin["bottom"];
     
     var x = new Ordinal();
     x.rangePoints([0, width], padding: 0.1);
     
-    var xAxis = new Axis();
-    xAxis.scale = x;
-    xAxis.orient = "bottom";
-    
     var y = new LinearScale();
     y.range = [height, 0];
-    
-    var yAxis = new Axis();
-    yAxis.scale = y;
-    yAxis.orient = "left";
-    
-    yAxis.tickFormat = yAxisTickFormat;
     
     var svg = selectElement($elmt).append("svg");
     svg.attr("width", width +  margin["left"] + margin["right"]);
@@ -74,35 +58,9 @@ class LineChart {
     
     y.domain = y_extent;
     
-    var gx = g.append("g");
-    gx.attr("class", "x axis");
-    gx.attr("transform", "translate(0,${height})");
-    gx.call(xAxis);
+    renderXAxis(x, g);
+    renderYAxis(y, g);
     
-    var gy = g.append("g");
-    gy.attr("class", "y axis");
-    gy.call(yAxis);
-    
-    var gl = gy.append("text");
-    gl.attr("transform", "rotate(-90)");
-    gl.attr("y", 6);
-    gl.attr("dy", ".71em");
-    gl.style.textAnchorConst = "end";
-    gl.text = "CO2e (g)";
-    
-    var ggridlines = g.append("g");
-    ggridlines.attr("class", "ygridlines");
-    BoundSelection tick = ggridlines.selectAll(".gridline").data(y.ticks(10)/*, key: scale1 */);
-    var tickEnter = tick.enter.append("g");
-    tickEnter.attr("class", "gridline");
-    tickEnter.append("line");
-    tickEnter.attrFunc("transform", (d, i) => "translate(0, ${y(d)})");
-    var lineEnter = tickEnter.select("line");
-    //lineEnter.attr("y2", 50);
-    //lineEnter.attr("y1", 50);
-    //lineEnter.attr("x1", 0);
-    lineEnter.attr("x2", width);
-
     var line = new Line();
     line.x = (d, i) => x(d["x"]);
     line.y = (d, i) {
@@ -124,24 +82,7 @@ class LineChart {
       index = 1;
     }
     
-    if (has_legend) {
-      var legend_div = selectElement($elmt).append("div");
-      legend_div.attr("class", "legend");
-      BoundSelection sel = legend_div.selectAll(".legend-item").data(_data);
-      Selection legend_item = sel.enter.append("div");
-      legend_item.attr("class", "legend-item clearfix");
-      
-      Selection legend_key = legend_item.append("div");
-      legend_key.attr("class", "legend-key");
-      legend_key.style.backgroundColor = (d, i) {
-        return "#${color(d.first['y']).toRadixString(16)}";
-      };
-
-      Selection legend_label = legend_item.append("div");
-      legend_label.textFunc = (d, i) {
-        return d.first['y'].toString();
-      };
-    }
+    renderLegend($elmt, _data, color);
   }
   
   void set data(List value) {
