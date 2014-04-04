@@ -58,8 +58,9 @@ class LineChart extends ChartWithAxes {
     
     y.domain = y_extent;
     
-    renderXAxis(x, g);
-    renderYAxis(y, g);
+   // Below data
+   renderXAxis(x, g);
+   renderGridlines(y, g);
     
     var line = new Line();
     line.x = (d, i) => x(d["x"]);
@@ -82,6 +83,7 @@ class LineChart extends ChartWithAxes {
       index = 1;
     }
     
+    renderYAxis(y, g);
     renderLegend($elmt, _data, color);
   }
   

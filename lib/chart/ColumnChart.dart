@@ -25,13 +25,7 @@ abstract class ChartWithAxes {
     gx_text.attr("dy", "0em");
   }
   
-  void renderYAxis(LinearScale y, var g) {
-    var yAxis = new Axis();
-    yAxis.scale = y;
-    yAxis.orient = "left";
-    
-    yAxis.tickFormat = yAxisTickFormat;
-    
+  void renderGridlines(LinearScale y, var g) {
     // First render gridlines
     var ggridlines = g.append("g");
     ggridlines.attr("class", "ygridlines");
@@ -42,6 +36,14 @@ abstract class ChartWithAxes {
     tickEnter.attrFunc("transform", (d, i) => "translate(0, ${y(d)})");
     var lineEnter = tickEnter.select("line");
     lineEnter.attr("x2", width);
+  }
+  
+  void renderYAxis(LinearScale y, var g) {
+    var yAxis = new Axis();
+    yAxis.scale = y;
+    yAxis.orient = "left";
+    
+    yAxis.tickFormat = yAxisTickFormat;
     
     // Then axis
     var gy = g.append("g");
@@ -157,8 +159,9 @@ class ColumnChart extends ChartWithAxes {
     
     y.domain = y_extent;
     
+    // Below data
     renderXAxis(x, g);
-    renderYAxis(y, g);
+    renderGridlines(y, g);
     
     int index = 0;
     for (List series in _data) {
@@ -182,7 +185,9 @@ class ColumnChart extends ChartWithAxes {
       rect.style.fill = (Object d, int i) => "#${(color((d as Map)["y"]) as int).toRadixString(16)}";
       index += 1;
     }
-    
+
+    // Ontop of data
+    renderYAxis(y, g);
     renderLegend($elmt, _data, color);
   }
   
