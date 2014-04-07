@@ -40,6 +40,9 @@ class _Popover {
   }
   
   void position(Object d) {
+    Map data = (d as Map)['data'];
+    $popover_title.text = data['x'].toString();
+    
     List centroid = arc.centroid(d, null);
     Rectangle rect = $hover.getBoundingClientRect();
     int x = (centroid[0].toInt() + (width / 2)).floor();
@@ -50,8 +53,6 @@ class _Popover {
     $hover.style.left = "${x}px";
     $hover.style.top = "${y}px";
 
-    Map data = (d as Map)['data'];
-    $popover_title.text = data['x'].toString();
   }
   
   void set datum(Object d) {
@@ -64,10 +65,10 @@ class _Popover {
       return;
     }
 
-    // Set display first so we compute bounds
+    // Set display and content first so we compute popover bounds correctly
     $hover.style.display = "block";
-    position(d);
     $content_value.text = popoverContentFunc(d);
+    position(d);
   }
 }
 

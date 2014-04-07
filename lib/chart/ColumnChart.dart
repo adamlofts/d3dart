@@ -92,16 +92,14 @@ class _ColumnPopover extends _Popover {
   }
   
   void position(Object d) {
+    $popover_title.text = (d as Map)['x'].toString();
     
-    //List centroid = arc.centroid(d, null);
     Rectangle rect = $hover.getBoundingClientRect();
     int xoff = (x((d as Map)['x']) + margin['left'] - rect.width).floor();
     int yoff = (y((d as Map)['value']) + margin['top'] - (rect.height / 2)).floor();
 
     $hover.style.left = "${xoff}px";
     $hover.style.top = "${yoff}px";
-    
-    $popover_title.text = (d as Map)['x'].toString();
   }
 }
 
