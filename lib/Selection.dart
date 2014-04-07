@@ -301,23 +301,35 @@ class Selection {
   
   // Events
   
-  /*
-  static const _EventStreamProvider<MouseEvent> clickEvent = const _EventStreamProvider<MouseEvent>('click');
-  ElementStream<MouseEvent> get onClick => clickEvent.forSelection(this);
-  */
+  static const _SelectionEventStreamProvider<MouseEvent> clickEvent = const _SelectionEventStreamProvider<MouseEvent>(Element.clickEvent);
+  Stream<MouseEvent> get onClick => clickEvent.forSelection(this);
+
+  static const _SelectionEventStreamProvider<MouseEvent> mouseOverEvent = const _SelectionEventStreamProvider<MouseEvent>(Element.mouseOverEvent);
+  Stream<MouseEvent> get onMouseOver => mouseOverEvent.forSelection(this);
+
+  static const _SelectionEventStreamProvider<MouseEvent> mouseOutEvent = const _SelectionEventStreamProvider<MouseEvent>(Element.mouseOutEvent);
+  Stream<MouseEvent> get onMouseOut => mouseOutEvent.forSelection(this);
 }
 
-/*
-class _EventStreamProvider<T extends Event> extends EventStreamProvider<T> {
-  const _EventStreamProvider(_eventType) : super(_eventType);
+typedef ElementStream ElementStreamFunction(Element elmt);
 
-  ElementStream<T> forSelection(Selection s, {bool useCapture: false}) {
+class _SelectionEventStreamProvider<T extends Event> {
+  
+  final EventStreamProvider provider;
+  const _SelectionEventStreamProvider(EventStreamProvider this.provider);
+
+  Stream<T> forSelection(Selection s, {bool useCapture: false}) {
+    StreamController<T> controller = new StreamController<T>.broadcast();
+    
     s.each((Element elmt, dynamic d, int i, [int j]) {
-     /// elmt.on[this.getEventType(null)].pipe(streamConsumer)
+      provider.forElement(elmt, useCapture: useCapture).listen((MouseEvent evt) {
+        controller.add(evt);
+      });
     });
+    
+    return controller.stream;
   }
 }
-*/
 
 class BoundSelection extends Selection {
   List<_Group> _enter;
