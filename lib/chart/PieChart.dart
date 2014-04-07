@@ -67,7 +67,12 @@ class _Popover {
 
     // Set display and content first so we compute popover bounds correctly
     $hover.style.display = "block";
-    $content_value.text = popoverContentFunc(d);
+    
+    Node node = $content_value.firstChild;
+    if (node != null) {
+      $content_value.firstChild.remove();
+    }
+    $content_value.append(popoverContentFunc(d));
     position(d);
   }
 }
