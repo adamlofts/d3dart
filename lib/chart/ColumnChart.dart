@@ -81,6 +81,30 @@ abstract class ChartWithAxes {
   }
 }
 
+class _ColumnPopover extends _Popover {
+  
+  var margin;
+  var x;
+  var y;
+  
+  _ColumnPopover(Element $elmt, num width, num height, var this.margin, var this.x, var this.y) : super($elmt, null, width, height) {
+    
+  }
+  
+  void position(Object d) {
+    
+    //List centroid = arc.centroid(d, null);
+    Rectangle rect = $hover.getBoundingClientRect();
+    int xoff = (x((d as Map)['x']) + margin['left'] - rect.width).floor();
+    int yoff = (y((d as Map)['value']) + margin['top'] - (rect.height / 2)).floor();
+
+    $hover.style.left = "${xoff}px";
+    $hover.style.top = "${yoff}px";
+    
+    $popover_title.text = (d as Map)['x'].toString();
+  }
+}
+
 class ColumnChart extends ChartWithAxes {
   
   Element $elmt;
@@ -94,6 +118,8 @@ class ColumnChart extends ChartWithAxes {
   
   bool is_stacked = true;
   
+  var popoverContentFunc;
+
   ColumnChart(Element this.$elmt, { int this.initial_width, int this.initial_height }) {
     Rectangle rect = $elmt.getBoundingClientRect();
     if (width == null) {
@@ -164,6 +190,7 @@ class ColumnChart extends ChartWithAxes {
     renderGridlines(y, g);
     
     int index = 0;
+    List<Selection> rects = [];
     for (List series in _data) {
       EnterSelection bar = g.selectAll(".bar${index}")
          .data(series)
@@ -183,12 +210,32 @@ class ColumnChart extends ChartWithAxes {
          .attrFunc("height", (d,i) { return y(d["stack_start"]) - y(d["stack_end"]); });
       
       rect.style.fill = (Object d, int i) => "#${(color((d as Map)["y"]) as int).toRadixString(16)}";
+      rects.add(rect);
       index += 1;
     }
 
     // Ontop of data
     renderYAxis(y, g);
     renderLegend($elmt, _data, color);
+
+    if (popoverContentFunc != null) {
+      _ColumnPopover hover = new _ColumnPopover($elmt, width, height, margin, x, y);
+      hover.popoverContentFunc = popoverContentFunc;
+          
+      for (Selection rect in rects) {
+        rect.onMouseOver.listen((MouseEvent evt) {
+          var sel = selectElement(evt.target);
+          Object datum = sel.datum;
+          if (datum != null) {
+            hover.datum = datum;
+          }
+        });
+      }
+      
+      $elmt.onMouseLeave.listen((_) {
+        hover.datum = null;
+      });
+    }
   }
   
   void set data(List value) {

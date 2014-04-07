@@ -1,6 +1,6 @@
 part of D3Dart;
 
-class _ArcHover {
+class _Popover {
   
   var popoverContentFunc;
   
@@ -16,7 +16,7 @@ class _ArcHover {
   
   bool is_left = true;
   
-  _ArcHover(Element $elmt, Arc this.arc, num this.width, num this.height) {
+  _Popover(Element $elmt, Arc this.arc, num this.width, num this.height) {
     DivElement $arrow = new DivElement();
     $arrow.classes.add("arrow");
     $hover.append($arrow);
@@ -39,6 +39,21 @@ class _ArcHover {
     }
   }
   
+  void position(Object d) {
+    List centroid = arc.centroid(d, null);
+    Rectangle rect = $hover.getBoundingClientRect();
+    int x = (centroid[0].toInt() + (width / 2)).floor();
+    if (is_left) {
+      x -= rect.width.floor();
+    }
+    int y = (centroid[1].toInt() + (height / 2) - (rect.height / 2)).floor();
+    $hover.style.left = "${x}px";
+    $hover.style.top = "${y}px";
+
+    Map data = (d as Map)['data'];
+    $popover_title.text = data['x'].toString();
+  }
+  
   void set datum(Object d) {
     if (d == _datum) {
       return;
@@ -48,21 +63,10 @@ class _ArcHover {
       $hover.style.display = "none";
       return;
     }
-          
-    List centroid = arc.centroid(d, null);
+
+    // Set display first so we compute bounds
     $hover.style.display = "block";
-    
-    Rectangle rect = $hover.getBoundingClientRect();
-    int x = (centroid[0].toInt() + (width / 2)).floor();
-    if (is_left) {
-      x -= rect.width.floor();
-    }
-    int y = (centroid[1].toInt() + (height / 2) - (rect.height / 2)).floor();
-    $hover.style.left = "${x}px";
-    $hover.style.top = "${y}px";
-    
-    Map data = (d as Map)['data'];
-    $popover_title.text = data['x'].toString();
+    position(d);
     $content_value.text = popoverContentFunc(d);
   }
 }
@@ -161,7 +165,7 @@ class PieChart {
     }
     
     if (popoverContentFunc != null) {
-      _ArcHover hover = new _ArcHover($elmt, arc, width, height);
+      _Popover hover = new _Popover($elmt, arc, width, height);
       hover.popoverContentFunc = popoverContentFunc;
           
       path.onMouseOver.listen((MouseEvent evt) {
