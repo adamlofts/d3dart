@@ -1,5 +1,72 @@
 part of D3Dart;
 
+class _ArcHover {
+  
+  var popoverContentFunc;
+  
+  Object _datum;
+  
+  Element $hover = new DivElement();
+  Element $popover_title = new DivElement();
+  Element $content_value = new DivElement();
+    
+  Arc arc;
+  num width;
+  num height;
+  
+  bool is_left = true;
+  
+  _ArcHover(Element $elmt, Arc this.arc, num this.width, num this.height) {
+    DivElement $arrow = new DivElement();
+    $arrow.classes.add("arrow");
+    $hover.append($arrow);
+    
+    $popover_title.classes.add("popover-title");
+    $hover.append($popover_title);
+    
+    Element $content = new DivElement();
+    $content.classes.add("popover-content");
+    $content.append($content_value);
+    $hover.append($content);
+    
+    $elmt.append($hover);
+    
+    $hover.classes.addAll(const ["chart-hover", "popover"]);
+    if (is_left) {
+      $hover.classes.add("left");
+    } else {
+      $hover.classes.add("right");
+    }
+  }
+  
+  void set datum(Object d) {
+    if (d == _datum) {
+      return;
+    }
+    _datum = d;  
+    if (d == null) {
+      $hover.style.display = "none";
+      return;
+    }
+          
+    List centroid = arc.centroid(d, null);
+    $hover.style.display = "block";
+    
+    Rectangle rect = $hover.getBoundingClientRect();
+    int x = (centroid[0].toInt() + (width / 2)).floor();
+    if (is_left) {
+      x -= rect.width.floor();
+    }
+    int y = (centroid[1].toInt() + (height / 2) - (rect.height / 2)).floor();
+    $hover.style.left = "${x}px";
+    $hover.style.top = "${y}px";
+    
+    Map data = (d as Map)['data'];
+    $popover_title.text = data['x'].toString();
+    $content_value.text = popoverContentFunc(d);
+  }
+}
+
 class PieChart {
   
   Element $elmt;
@@ -17,6 +84,8 @@ class PieChart {
   num outerRadiusPercent = 1;
   
   bool has_legend = false;
+  
+  var popoverContentFunc;
   
   PieChart(Element this.$elmt, { int this.initial_width, int this.initial_height }) {
     Rectangle rect = $elmt.getBoundingClientRect();
@@ -53,7 +122,7 @@ class PieChart {
         .enter.append("g");
     
     g.attr("class", "arc");
-      
+    
     var path = g.append("path");
     path.attrFunc("d", arc);
     path.style.fill = (Object d, int i) => "#${(color(i) as int).toRadixString(16)}";
@@ -89,6 +158,23 @@ class PieChart {
       legend_label.textFunc = (d, i) {
         return d['x'].toString();
       };
+    }
+    
+    if (popoverContentFunc != null) {
+      _ArcHover hover = new _ArcHover($elmt, arc, width, height);
+      hover.popoverContentFunc = popoverContentFunc;
+          
+      path.onMouseOver.listen((MouseEvent evt) {
+        var sel = selectElement(evt.target);
+        Object datum = sel.datum;
+        if (datum != null) {
+          hover.datum = datum;
+        }
+      });
+      
+      $elmt.onMouseLeave.listen((_) {
+        hover.datum = null;
+      });
     }
   }
   
