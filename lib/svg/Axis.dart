@@ -14,7 +14,7 @@ class Axis {
   var tickValues = null;
   var tickFormat;
   
-  String call(Selection g) {
+  void call(Selection g) {
     g.each((Element elmt, dynamic d, int i, [int j]) {
       var g = selectElement(elmt);
 
@@ -150,11 +150,11 @@ class Axis {
     });
   }
   
-  Function d3_svg_axisX(selection, x) {
+  void d3_svg_axisX(selection, x) {
     selection.attrFunc("transform", (d, i) => "translate(${x(d)},0)");
   }
   
-  Function d3_svg_axisY(selection, y) {
+  void d3_svg_axisY(selection, y) {
     selection.attrFunc("transform", (d, i) => "translate(0, ${y(d)})");
   }
 }

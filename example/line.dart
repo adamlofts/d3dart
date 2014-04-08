@@ -1,7 +1,4 @@
 
-import 'dart:math' as Math;
-import 'dart:html';
-
 import 'package:intl/intl.dart';
 
 import 'package:d3dart/D3Dart.dart' as d3;

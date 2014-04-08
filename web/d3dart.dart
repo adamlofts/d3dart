@@ -16,7 +16,7 @@ void main() {
   
   //var circle = svg.selectAll("circle");
   
-  query("button").onClick.listen(go);
+  querySelector("button").onClick.listen(go);
 }
 
 void go(_) {

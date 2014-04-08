@@ -70,7 +70,7 @@ class Selection {
   }
   
   Selection select(String selector) {
-    return selectFunc((Element elmt, dynamic d, int i, [int j]) => elmt.query(selector));
+    return selectFunc((Element elmt, dynamic d, int i, [int j]) => elmt.querySelector(selector));
   }
   
   Selection selectFunc(EachFunction f) {
@@ -105,7 +105,7 @@ class Selection {
         if (elmt != null) {
           _Group subgroup = new _Group();
           subgroup.parentNode = elmt;
-          subgroup.addAll(elmt.queryAll(selector)); // subgroups.push(subgroup = d3_array(selector.call(node, node.__data__, i, j)));
+          subgroup.addAll(elmt.querySelectorAll(selector)); // subgroups.push(subgroup = d3_array(selector.call(node, node.__data__, i, j)));
           subgroups.add(subgroup);
         }
         i += 1;
@@ -279,8 +279,8 @@ class Selection {
     f(this);
   }
   
+  /*
   Selection get transition {
-    /*
       var id = d3_transitionInheritId || ++d3_transitionId,
           subgroups = [],
           subgroup,
@@ -296,8 +296,8 @@ class Selection {
           }
 
           return d3_transition(subgroups, id);
-          */
   }
+   */
   
   // Events
   
