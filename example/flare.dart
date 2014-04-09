@@ -54,13 +54,9 @@ void main() {
       return "#${color(d["name"]).toRadixString(16)}";
     };
     path.style.fillRule = (d, i) => "evenodd";
-    /*
-      .each(stash);
-     */
 
-    for (Element elmt in querySelectorAll("input")) {
-      elmt.onChange.listen(onChange);
-    }
+    d3.Selection sel = d3.selectAll("input");
+    sel.onClick.listen(onChange);
   });
 }
 
