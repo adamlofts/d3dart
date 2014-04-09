@@ -322,7 +322,7 @@ class _SelectionEventStreamProvider<T extends Event> {
     StreamController<T> controller = new StreamController<T>.broadcast();
     
     s.each((Element elmt, dynamic d, int i, [int j]) {
-      provider.forElement(elmt, useCapture: useCapture).listen((MouseEvent evt) {
+      provider.forElement(elmt, useCapture: useCapture).listen((Event evt) {
         controller.add(evt);
       });
     });
