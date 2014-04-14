@@ -97,6 +97,8 @@ class PieChart {
   
   var popoverContentFunc;
   
+  DivElement $title = new DivElement();
+  
   PieChart(Element this.$elmt, { int this.initial_width, int this.initial_height }) {
     Rectangle rect = $elmt.getBoundingClientRect();
     if (initial_width == null) {
@@ -169,6 +171,9 @@ class PieChart {
         return d['x'].toString();
       };
     }
+    
+    $title.classes.add("chart-title");
+    $elmt.append($title);
     
     if (popoverContentFunc != null) {
       _Popover hover = new _Popover($elmt, arc, width, height);
