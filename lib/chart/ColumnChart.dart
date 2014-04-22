@@ -96,7 +96,7 @@ class _ColumnPopover extends _Popover {
     
     Rectangle rect = $hover.getBoundingClientRect();
     int xoff = (x((d as Map)['x']) + margin['left'] - rect.width).floor();
-    int yoff = (y((d as Map)['value']) + margin['top'] - (rect.height / 2)).floor();
+    int yoff = (y((d as Map)['stack_end']) + margin['top'] - (rect.height / 2)).floor();
 
     $hover.style.left = "${xoff}px";
     $hover.style.top = "${yoff}px";
