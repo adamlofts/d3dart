@@ -43,7 +43,7 @@ class LineChart extends ChartWithAxes {
       return d["x"];
     }).toList();
     
-    var y_extent = [0, 1];
+    var y_extent = [0, 0.01];
     for (List series in _data) {
       var extents = extent(series, (d,i) {
         num v = d["value"];
