@@ -86,18 +86,28 @@ class _ColumnPopover extends _Popover {
   var margin;
   var x;
   var y;
+  final bool is_stacked;
+  final num bar_width;
   
-  _ColumnPopover(Element $elmt, num width, num height, var this.margin, var this.x, var this.y) : super($elmt, null, width, height) {
-    
-  }
+  _ColumnPopover(Element $elmt, num width, num height, var this.margin, var this.x, var this.y, bool this.is_stacked, num this.bar_width) : 
+    super($elmt, null, width, height);
   
-  void position(Object d) {
-    $popover_title.text = (d as Map)['x'].toString();
+  void position(Object _d) {
+    Map d = _d as Map;
+    $popover_title.text = d['x'].toString();
     
     Rectangle rect = $hover.getBoundingClientRect();
-    int xoff = (x((d as Map)['x']) + margin['left'] - rect.width).floor();
-    int yoff = (y((d as Map)['stack_end']) + margin['top'] - (rect.height / 2)).floor();
-
+    int xoff;
+    int yoff;
+    
+    if (is_stacked) {
+      xoff = (x(d['x']) + margin['left'] - rect.width).floor();
+      yoff = (y(d['stack_end']) + margin['top'] - (rect.height / 2)).floor();
+    } else {
+      xoff = (x(d['x']) + d['series_index'] * bar_width + margin['left'] - rect.width).floor();
+      yoff = (y(d['value']) + margin['top'] - (rect.height / 2)).floor();
+    }
+    
     $hover.style.left = "${xoff}px";
     $hover.style.top = "${yoff}px";
   }
@@ -145,22 +155,24 @@ class ColumnChart extends ChartWithAxes {
     var g = svg.append("g");
     g.attr("transform", "translate(${margin["left"]},${margin["top"]})");
     
-    if (is_stacked) {
-      List last_series_total = [];
-      for (int i = 0; i < _data.first.length; i += 1) {
-        last_series_total.add(0);
+    List last_series_total = [];
+    for (int i = 0; i < _data.first.length; i += 1) {
+      last_series_total.add(0);
+    }
+    int series_index = 0;
+    for (List series in _data) {
+      int i = 0;
+      for (Map d in series) {
+        num v = last_series_total[i];
+        d['series_index'] = series_index;
+        d['stack_start'] = v;
+        v += d['value'];
+        d['stack_end'] = v;
+        last_series_total[i] = v;
+        i += 1;
       }
-      for (List series in _data) {
-        int i = 0;
-        for (Map d in series) {
-          num v = last_series_total[i];
-          d['stack_start'] = v;
-          v += d['value'];
-          d['stack_end'] = v;
-          last_series_total[i] = v;
-          i += 1;
-        }
-      }
+      
+      series_index += 1;
     }
     
     var series1 = _data[0];
@@ -171,7 +183,13 @@ class ColumnChart extends ChartWithAxes {
     var y_extent = [0, 1e-6];
     for (List series in _data) {
       var extents = extent(series, (d,i) {
-        num v = d["stack_end"];
+        num v;
+        if (is_stacked) {
+          v = d["stack_end"];
+        } else {
+          v = d["value"];
+        }
+        
         if (v.isNaN || v.isInfinite) {
           v = 0;
         }
@@ -187,6 +205,13 @@ class ColumnChart extends ChartWithAxes {
     renderXAxis(x, g);
     renderGridlines(y, g);
     
+    num bar_width;
+    if (is_stacked) {
+      bar_width = x.rangeBand;
+    } else {
+      bar_width = x.rangeBand / _data.length;
+    }
+          
     int index = 0;
     List<Selection> rects = [];
     for (List series in _data) {
@@ -195,17 +220,26 @@ class ColumnChart extends ChartWithAxes {
        .enter;
 
       Selection rect = bar.append("rect");
-      rect
-         .attr("class", "bar${index}");
-      rect
-         .attrFunc("x", (d,i) { return x(d["x"]); });
-      rect
-         .attr("width", x.rangeBand);
+      rect.attr("class", "bar${index}");
       
-      rect
-         .attrFunc("y", (d,i) { return y(d["stack_end"]); });
-      rect
-         .attrFunc("height", (d,i) { return y(d["stack_start"]) - y(d["stack_end"]); });
+      if (is_stacked) {
+        rect.attrFunc("x", (d, i) { return x(d["x"]); });
+      } else {
+        rect.attrFunc("x", (d, i) { return x(d["x"]) + bar_width * d["series_index"]; });
+      }
+      rect.attr("width", bar_width);
+      
+      if (is_stacked) {
+        rect
+           .attrFunc("y", (d,i) { return y(d["stack_end"]); });
+        rect
+           .attrFunc("height", (d,i) { return y(d["stack_start"]) - y(d["stack_end"]); });
+      } else {
+        rect
+           .attrFunc("y", (d,i) { return y(d["value"]); });
+        rect
+           .attrFunc("height", (d,i) { return y(0) - y(d["value"]); });
+      }
       
       rect.style.fill = (Object d, int i) => "#${(color((d as Map)["y"]) as int).toRadixString(16)}";
       rects.add(rect);
@@ -217,7 +251,7 @@ class ColumnChart extends ChartWithAxes {
     renderLegend($elmt, _data, color);
 
     if (popoverContentFunc != null) {
-      _ColumnPopover hover = new _ColumnPopover($elmt, width, height, margin, x, y);
+      _ColumnPopover hover = new _ColumnPopover($elmt, width, height, margin, x, y, is_stacked, bar_width);
       hover.popoverContentFunc = popoverContentFunc;
           
       for (Selection rect in rects) {
