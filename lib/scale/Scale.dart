@@ -39,11 +39,16 @@ class Scale {
     0x756bb1, 0x9e9ac8, 0xbcbddc, 0xdadaeb,
     0x636363, 0x969696, 0xbdbdbd, 0xd9d9d9
   ];
+  
+  static final List<int> _gar = [
+    0x109933, 0xffcc00, 0xff0000
+  ];
 
   static Ordinal get category10 => new Ordinal(range: _category10);
   static Ordinal get category20 => new Ordinal(range: _category20);
   static Ordinal get category20b => new Ordinal(range: _category20b);
   static Ordinal get category20c => new Ordinal(range: _category20c);
+  static Ordinal get gar => new Ordinal(range: _gar);
   
   static Ordinal ordinal() {
     return new Ordinal();
