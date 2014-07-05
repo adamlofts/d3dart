@@ -41,7 +41,7 @@ class Scale {
   ];
   
   static final List<int> _gar = [
-    0x109933, 0xffcc00, 0xff0000
+    0x109933, 0xffcc00, 0xff0000, 0xBBBBBB, 0x909090, 0x505050 
   ];
 
   static Ordinal get category10 => new Ordinal(range: _category10);
