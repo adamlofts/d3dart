@@ -127,7 +127,9 @@ class ColumnChart extends ChartWithAxes {
   bool is_stacked = true;
   
   var popoverContentFunc;
-
+  
+  num column_padding = 0.1;
+  
   ColumnChart(Element this.$elmt, { int this.initial_width, int this.initial_height }) {
     Rectangle rect = $elmt.getBoundingClientRect();
     if (width == null) {
@@ -143,7 +145,7 @@ class ColumnChart extends ChartWithAxes {
     height = initial_height - margin["top"] - margin["bottom"];
     
     var x = new Ordinal();
-    x.rangeRoundBands([0, width], padding: 0.1);
+    x.rangeRoundBands([0, width], padding: Math.max(column_padding, 0.01));
     
     var y = new LinearScale();
     y.range = [height, 0];
