@@ -94,6 +94,8 @@ class PieChart {
   num outerRadiusPercent = 1;
   
   bool has_legend = false;
+  bool has_segment_labels = false;
+  bool is_hide_small_segment_labels = true;
   
   var popoverContentFunc;
   
@@ -129,30 +131,33 @@ class PieChart {
     PieLayout pie = Layout.pie();
     pie.value = (Map d) => d["value"];
     
-    var g = svg.selectAll(".arc")
+    var enterSelection = svg.selectAll(".arc")
         .data(pie(_data))
-        .enter.append("g");
+        .enter;
     
+    var g = enterSelection.append("g");
     g.attr("class", "arc");
     
     var path = g.append("path");
     path.attrFunc("d", arc);
     path.style.fill = (Object d, int i) => "#${(color(i) as int).toRadixString(16)}";
     
-    var text = g.append("text");
-    text.attrFunc("transform", (Object d, int i) => "translate(${ arc.centroid(d, i).join(",") })");
-    text.attr("dy", ".35em");
-    
-    text.style.textAnchor = (d, i) => "middle";
-    text.textFunc = (d, i) => d["data"]["name"];
-    
-    text.attrFunc("display", (Map d, i) { // Hide label for small wedges
-      if ((d["endAngle"] - d["startAngle"]) < 0.01) {
-        return "none";
-      }
-      return "";
-    });
-
+    if (has_segment_labels) {
+      var g2 = enterSelection.append("g");
+      var text = g2.append("text");
+      text.attrFunc("transform", (Object d, int i) => "translate(${ arc.centroid(d, i).join(",") })");
+      text.attr("dy", ".35em");
+      
+      text.style.textAnchor = (d, i) => "middle";
+      text.textFunc = (d, i) {
+        if (is_hide_small_segment_labels) {
+          if ((d["endAngle"] - d["startAngle"]) < 0.01) {
+            return "";
+          }
+        }
+        return d["data"]["x"];
+      };
+    }
 
     if (has_legend) {
       var legend_div = selectElement($elmt).append("div");
