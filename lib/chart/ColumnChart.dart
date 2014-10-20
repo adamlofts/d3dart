@@ -22,6 +22,7 @@ abstract class ChartWithAxes {
   num height;
 
   bool has_legend = false;
+  bool has_gridlines = true;
   String yAxisLabel = "y Axis";
   Map margin = {"top": 20, "right": 20, "bottom": 250, "left": 50};
   Function yAxisTickFormat;
@@ -225,7 +226,10 @@ class ColumnChart extends ChartWithAxes {
     
     // Below data
     renderXAxis(x, g);
-    renderGridlines(y, g);
+    
+    if (has_gridlines) {
+      renderGridlines(y, g);
+    }
     
     num bar_width;
     if (is_stacked) {
