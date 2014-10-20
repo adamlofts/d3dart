@@ -13,10 +13,10 @@ class LineChart extends ChartWithAxes {
   
   LineChart(Element this.$elmt, { int this.initial_width, int this.initial_height }) {
     Rectangle rect = $elmt.getBoundingClientRect();
-    if (width == null) {
+    if (initial_width == null) {
       initial_width = rect.width;
     }
-    if (height == null) {
+    if (initial_height == null) {
       initial_height = rect.height;
     }
   }
