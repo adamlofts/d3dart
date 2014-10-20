@@ -1,5 +1,22 @@
 part of D3Dart;
 
+/**
+ * EventStream provides a sync broadcast event
+ */
+class EventStream<T> {
+  StreamController<T> _controller = new StreamController<T>(sync: true);
+  Stream<T> stream;
+
+  EventStream() {
+    stream = _controller.stream.asBroadcastStream();
+  }
+
+  signal([T value = null]) {
+    _controller.add(value);
+  }
+}
+
+
 abstract class ChartWithAxes {
   num width;
   num height;
@@ -114,6 +131,9 @@ class _ColumnPopover extends _Popover {
 }
 
 class ColumnChart extends ChartWithAxes {
+  
+  final EventStream<Object> _onItemClick = new EventStream<Object>();
+  Stream<Object> get onItemClick => _onItemClick.stream;
   
   Element $elmt;
   
@@ -263,6 +283,11 @@ class ColumnChart extends ChartWithAxes {
           if (datum != null) {
             hover.datum = datum;
           }
+        });
+        rect.onClick.listen((MouseEvent evt) {
+          var sel = selectElement(evt.target);
+          Object datum = sel.datum;
+          _onItemClick.signal(datum);
         });
       }
       
