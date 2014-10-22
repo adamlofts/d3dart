@@ -131,10 +131,17 @@ class _ColumnPopover extends _Popover {
   }
 }
 
+class ItemClickEvent {
+  final Object datum;
+  final Selection selection;
+  final MouseEvent evt;
+  const ItemClickEvent(MouseEvent this.evt, Selection this.selection, Object this.datum);
+}
+
 class ColumnChart extends ChartWithAxes {
   
-  final EventStream<Object> _onItemClick = new EventStream<Object>();
-  Stream<Object> get onItemClick => _onItemClick.stream;
+  final EventStream<ItemClickEvent> _onItemClick = new EventStream<ItemClickEvent>();
+  Stream<ItemClickEvent> get onItemClick => _onItemClick.stream;
   
   Element $elmt;
   
@@ -291,7 +298,7 @@ class ColumnChart extends ChartWithAxes {
         rect.onClick.listen((MouseEvent evt) {
           var sel = selectElement(evt.target);
           Object datum = sel.datum;
-          _onItemClick.signal(datum);
+          _onItemClick.signal(new ItemClickEvent(evt, sel, datum));
         });
       }
       
