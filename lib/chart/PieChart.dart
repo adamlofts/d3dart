@@ -1,7 +1,10 @@
 part of D3Dart;
 
+typedef String PopoverTitleFunc(dynamic d);
+
 class _Popover {
   
+  PopoverTitleFunc popoverTitleFunc;
   var popoverContentFunc;
   
   Object _datum;
@@ -41,7 +44,14 @@ class _Popover {
   
   void position(Object d) {
     Map data = (d as Map)['data'];
-    $popover_title.text = data['x'].toString();
+    
+    String title;
+    if (popoverTitleFunc != null) {
+      title = popoverTitleFunc(d);
+    } else {
+      title = data['x'].toString();
+    }
+    $popover_title.text = title;
     
     List centroid = arc.centroid(d, null);
     Rectangle rect = $hover.getBoundingClientRect();
@@ -98,7 +108,8 @@ class PieChart {
   bool is_hide_small_segment_labels = true;
   
   var popoverContentFunc;
-  
+  PopoverTitleFunc popoverTitleFunc;
+
   DivElement $title = new DivElement();
   
   PieChart(Element this.$elmt, { int this.initial_width, int this.initial_height }) {
@@ -182,6 +193,7 @@ class PieChart {
     
     if (popoverContentFunc != null) {
       _Popover hover = new _Popover($elmt, arc, width, height);
+      hover.popoverTitleFunc = popoverTitleFunc;
       hover.popoverContentFunc = popoverContentFunc;
           
       path.onMouseOver.listen((MouseEvent evt) {

@@ -112,7 +112,14 @@ class _ColumnPopover extends _Popover {
   
   void position(Object _d) {
     Map d = _d as Map;
-    $popover_title.text = d['x'].toString();
+    
+    String title;
+    if (popoverTitleFunc != null) {
+      title = popoverTitleFunc(d);
+    } else {
+      title = d['x'].toString();
+    }
+    $popover_title.text = title;
     
     Rectangle rect = $hover.getBoundingClientRect();
     int xoff;
@@ -155,6 +162,7 @@ class ColumnChart extends ChartWithAxes {
   bool is_stacked = true;
   
   var popoverContentFunc;
+  PopoverTitleFunc popoverTitleFunc;
   
   num column_padding = 0.1;
   
@@ -286,6 +294,7 @@ class ColumnChart extends ChartWithAxes {
     if (popoverContentFunc != null) {
       _ColumnPopover hover = new _ColumnPopover($elmt, width, height, margin, x, y, is_stacked, bar_width);
       hover.popoverContentFunc = popoverContentFunc;
+      hover.popoverTitleFunc = popoverTitleFunc;
           
       for (Selection rect in rects) {
         rect.onMouseOver.listen((MouseEvent evt) {
