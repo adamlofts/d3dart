@@ -194,22 +194,32 @@ class ColumnChart extends ChartWithAxes {
     g.attr("transform", "translate(${margin["left"]},${margin["top"]})");
     
     List last_series_total = [];
+    List last_series_total_neg = [];
     for (int i = 0; i < _data.first.length; i += 1) {
       last_series_total.add(0);
+      last_series_total_neg.add(0);
     }
     int series_index = 0;
     for (List series in _data) {
       int i = 0;
       for (Map d in series) {
         num v = last_series_total[i];
+        num v_neg = last_series_total_neg[i];
         d['series_index'] = series_index;
-        d['stack_start'] = v;
-        v += d['value'];
-        d['stack_end'] = v;
+        if (d['value'] >= 0) {
+          d['stack_start'] = v;
+          v += d['value'];
+          d['stack_end'] = v;
+        } else {
+          d['stack_end'] = v_neg;
+          v_neg += d['value'];
+          d['stack_start'] = v_neg;
+        }
+        
         last_series_total[i] = v;
+        last_series_total_neg[i] = v_neg;
         i += 1;
       }
-      
       series_index += 1;
     }
     
@@ -223,7 +233,11 @@ class ColumnChart extends ChartWithAxes {
       var extents = extent(series, (d,i) {
         num v;
         if (is_stacked) {
-          v = d["stack_end"];
+          if (d["value"] >= 0) {
+            v = d["stack_end"];
+          } else {
+            v = d["stack_start"];
+          }
         } else {
           v = d["value"];
         }
@@ -276,10 +290,17 @@ class ColumnChart extends ChartWithAxes {
         rect
            .attrFunc("height", (d,i) { return y(d["stack_start"]) - y(d["stack_end"]); });
       } else {
-        rect
-           .attrFunc("y", (d,i) { return y(d["value"]); });
-        rect
-           .attrFunc("height", (d,i) { return y(0) - y(d["value"]); });
+        
+        rect.attrFunc("y", (d, i) {
+          if (d["value"] < 0) {
+            return y(0);
+          }
+          return y(d["value"]);
+        });
+        rect.attrFunc("height", (d, i) {
+          num h = y(0) - y(d["value"]);
+          return h.abs();
+        });
       }
       
       rect.style.fill = (Object d, int i) => "#${(color((d as Map)["y"]) as int).toRadixString(16)}";
