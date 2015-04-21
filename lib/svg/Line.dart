@@ -29,7 +29,7 @@ class Line {
     while (++i < n) {
       if (defined(d = data[i], i)) {
         points.add([fx(d, i), fy(d, i)]);
-      } else if (points.length) {
+      } else if (points.length > 0) {
         segment();
         points = [];
       }

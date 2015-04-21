@@ -63,16 +63,13 @@ class LineChart extends ChartWithAxes {
    renderGridlines(y, g);
     
     var line = new Line();
-    line.x = (d, i) => x(d["x"]);
-    line.y = (d, i) {
+    line.defined = (d, i) {
       num v = d["value"];
-      if (v.isNaN || v.isInfinite) {
-        v = 0;
-      }
-      return y(v);
+      return !(v.isNaN || v.isInfinite);
     };
+    line.x = (d, i) => x(d["x"]);
+    line.y = (d, i) => y(d["value"]);
     
-    int index = 0;
     for (List series in _data) {
       var path = g.append("path");
       path.attr("class", "line");
@@ -80,7 +77,6 @@ class LineChart extends ChartWithAxes {
       
       path.attrFunc("stroke", (d,i)=> "#${color(d.first['y']).toRadixString(16)}");
       path.attrFunc("d", line);
-      index = 1;
     }
     
     renderYAxis(y, g);
