@@ -55,6 +55,18 @@ class Scale {
     0xf781bf,
     0x999999
   ];
+  
+  static final List<int> _brewerSequential = [
+    0xfff7fb,
+    0xece7f2,
+    0xd0d1e6,
+    0xa6bddb,
+    0x74a9cf,
+    0x3690c0,
+    0x0570b0,
+    0x045a8d,
+    0x023858
+  ];
 
   static Ordinal get category10 => new Ordinal(range: _category10);
   static Ordinal get category20 => new Ordinal(range: _category20);
@@ -62,6 +74,7 @@ class Scale {
   static Ordinal get category20c => new Ordinal(range: _category20c);
   static Ordinal get gar => new Ordinal(range: _gar);
   static Ordinal get brewer9 => new Ordinal(range: _brewer9);
+  static Ordinal get brewerSequential => new Ordinal(range: _brewerSequential);
   
   static Ordinal ordinal() {
     return new Ordinal();
