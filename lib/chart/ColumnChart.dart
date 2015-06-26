@@ -285,20 +285,38 @@ class ColumnChart extends ChartWithAxes {
       rect.attr("width", bar_width);
       
       if (is_stacked) {
-        rect
-           .attrFunc("y", (d,i) { return y(d["stack_end"]); });
-        rect
-           .attrFunc("height", (d,i) { return y(d["stack_start"]) - y(d["stack_end"]); });
-      } else {
-        
-        rect.attrFunc("y", (d, i) {
-          if (d["value"] < 0) {
-            return y(0);
+        rect.attrFunc("y", (d,i) {
+          num v = d["stack_end"];
+          if (v.isInfinite || v.isNaN || v < 0) {
+            v = 0;
           }
-          return y(d["value"]);
+          return y(v);
         });
         rect.attrFunc("height", (d, i) {
-          num h = y(0) - y(d["value"]);
+          num v = d["stack_end"];
+          if (v.isInfinite || v.isNaN || v < 0) {
+            v = 0;
+          }
+          num v1 = d["stack_start"];
+          if (v1.isInfinite || v1.isNaN || v1 < 0) {
+            v1 = 0;
+          }
+          return y(v1) - y(v);
+        });
+      } else {
+        rect.attrFunc("y", (d, i) {
+          num v = d["value"];
+          if (v.isInfinite || v.isNaN || v < 0) {
+            v = 0;
+          }
+          return y(v);
+        });
+        rect.attrFunc("height", (d, i) {
+          num v = d["value"];
+          if (v.isInfinite || v.isNaN || v < 0) {
+            v = 0;
+          }
+          num h = y(0) - y(v);
           return h.abs();
         });
       }
