@@ -1,7 +1,10 @@
 name: d3dart
 description: A sample web application
 dependencies:
-  browser: any
-  intl: any
+  browser: ">=0.10.0+1 <0.11.0"
+  intl: ">=0.9.8 <0.10.0"
 dev_dependencies:
   unittest: any
+author: Adam Lofts <adam.lofts@gmail.com>
+homepage: https://github.com/adamlofts/d3dart
+version: 0.0.1
