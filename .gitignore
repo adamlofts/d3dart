@@ -1,6 +1,7 @@
-packages
 pubspec.lock
 *~
 .idea/workspace.xml
 .idea/tasks.xml
-
+test/packages
+web/packages
+/packages
