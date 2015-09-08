@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+body {
+  font: 14px sans-serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.line {
+  fill: none;
+  stroke-width: 2px;
+}
+
+.legend {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 92px;
+  font-size: 80%;
+
+  max-height: 100%;
+  overflow: hidden;
+}
+
+.legend-key {
+  width: 15px;
+  height: 15px;
+  float: left;
+  margin: 0 5px 0 2px;
+  box-shadow: 0px 0px 1px 1px #FFF;
+}
+
+.legend-item {
+  margin-bottom: 5px;
+  text-shadow: 1px 1px 1px #FFF;
+}
+
+
+</style>
+<body>
+
+<div id="chart" style="position: relative; width: 60em; height: 50em"></div>
+
+<script type="application/dart" src="simpleline.dart"></script>
+<script type="application/javascript" src="packages/browser/dart.js"></script>
