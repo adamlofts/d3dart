@@ -2,7 +2,7 @@ name: d3dart
 description: A sample web application
 dependencies:
   browser: ">=0.10.0+1 <0.11.0"
-  intl: ">=0.9.8 <0.10.0"
+  intl: "^0.12.4+2"
 dev_dependencies:
   unittest: any
 author: Adam Lofts <adam.lofts@gmail.com>

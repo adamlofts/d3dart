@@ -14,6 +14,13 @@ class EventStream<T> {
   signal([T value = null]) {
     _controller.add(value);
   }
+
+  /**
+   * Remove all callbacks
+   */
+  void close() {
+    _controller.close();
+  }
 }
 
 
