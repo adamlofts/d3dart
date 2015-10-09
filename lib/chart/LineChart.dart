@@ -74,8 +74,8 @@ class LineChart extends ChartWithAxes {
       var path = g.append("path");
       path.attr("class", "line");
       path.datum = series;
-      
-      path.attrFunc("stroke", (d,i)=> "#${color(d.first['y']).toRadixString(16)}");
+
+      path.attrFunc("stroke", (d,i) => colorToHex(color(d.first['y'])));
       path.attrFunc("d", line);
     }
     

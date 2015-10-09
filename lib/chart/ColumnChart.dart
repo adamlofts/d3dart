@@ -94,9 +94,7 @@ abstract class ChartWithAxes {
       
       Selection legend_key = legend_item.append("div");
       legend_key.attr("class", "legend-key");
-      legend_key.style.backgroundColor = (d, i) {
-        return "#${color(d.first['y']).toRadixString(16)}";
-      };
+      legend_key.style.backgroundColor = (d, i) => colorToHex(color(d.first['y']));
 
       Selection legend_label = legend_item.append("div");
       legend_label.textFunc = (d, i) {
@@ -327,8 +325,9 @@ class ColumnChart extends ChartWithAxes {
           return h.abs();
         });
       }
-      
-      rect.style.fill = (Object d, int i) => "#${(color((d as Map)["y"]) as int).toRadixString(16)}";
+
+      rect.style.fill = (Object d, int i) => colorToHex(color((d as Map)['y']));
+
       rects.add(rect);
       index += 1;
     }

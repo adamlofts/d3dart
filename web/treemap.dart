@@ -37,7 +37,7 @@ void main() {
     var node = div.selectAll(".node").dataFunc(treemap.nodes).enter.append("div");
     node.attr("class", "node");
     node.call(position);
-    node.style.backgroundColor = (d, i) => (d["children"] != null) ? "#${color(d["name"]).toRadixString(16)}" : null;
+    node.style.backgroundColor = (d, i) => (d["children"] != null) ? colorToHex(color(d["name"])) : null;
     node.textFunc = (d, i) => (d["children"] != null) ? null : d["name"];
 
     for (Element $input in querySelectorAll("input")) {

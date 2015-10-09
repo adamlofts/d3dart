@@ -151,7 +151,8 @@ class PieChart {
     
     var path = g.append("path");
     path.attrFunc("d", arc);
-    path.style.fill = (Object d, int i) => "#${(color(i) as int).toRadixString(16)}";
+
+    path.style.fill = (Object d, int i) => colorToHex(color(i));
     
     if (has_segment_labels) {
       var g2 = enterSelection.append("g");
@@ -179,9 +180,7 @@ class PieChart {
 
       Selection legend_key = legend_item.append("div");
       legend_key.attr("class", "legend-key");
-      legend_key.style.backgroundColor = (d, i) {
-        return "#${color(i).toRadixString(16)}";
-      };
+      legend_key.style.backgroundColor = (d, i) => colorToHex(color(i));
       Selection legend_label = legend_item.append("div");
       legend_label.textFunc = (d, i) {
         return d['x'].toString();

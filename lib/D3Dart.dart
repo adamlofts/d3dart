@@ -104,3 +104,11 @@ List<num> d3range(num stop, { num start: 0, num step: 1 }) {
   }
   return ret;
 }
+
+/**
+ * Color to hex string. Convert num like 0xFF00FF to #FF00FF
+ */
+String colorToHex(int color) {
+  String hex = color.toRadixString(16);
+  return "#${hex.padLeft(6, '0')}";
+}
