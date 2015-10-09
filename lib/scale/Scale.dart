@@ -93,6 +93,7 @@ class Scale {
   static Ordinal get brewer9 => new Ordinal(range: _brewer9);
   static Ordinal get brewerSequential => new Ordinal(range: _brewerSequential);
   static Ordinal get kite => new Ordinal(range: _kite);
+  static Ordinal get kiteReversed => new Ordinal(range: _kite.reversed.toList());
 
   static Ordinal ordinal() {
     return new Ordinal();
