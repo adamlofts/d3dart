@@ -68,6 +68,23 @@ class Scale {
     0x023858
   ];
 
+  static final List<int> _kite = [
+    0x415A6C,
+    0xEA3592,
+    0x5A186B,
+    0xE6E8ED,
+    0x25B1E6,
+    0x333391,
+    0xCDD2DA,
+    0x96D22D,
+    0x009933,
+    0x009AA6,
+    0x66BDC9,
+    0xFFCC00,
+    0xFF6428,
+    0xC60C30
+  ];
+
   static Ordinal get category10 => new Ordinal(range: _category10);
   static Ordinal get category20 => new Ordinal(range: _category20);
   static Ordinal get category20b => new Ordinal(range: _category20b);
@@ -75,7 +92,8 @@ class Scale {
   static Ordinal get gar => new Ordinal(range: _gar);
   static Ordinal get brewer9 => new Ordinal(range: _brewer9);
   static Ordinal get brewerSequential => new Ordinal(range: _brewerSequential);
-  
+  static Ordinal get kite => new Ordinal(range: _kite);
+
   static Ordinal ordinal() {
     return new Ordinal();
   }
