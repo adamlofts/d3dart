@@ -1,29 +1,5 @@
 part of D3Dart;
 
-/**
- * EventStream provides a sync broadcast event
- */
-class EventStream<T> {
-  StreamController<T> _controller = new StreamController<T>(sync: true);
-  Stream<T> stream;
-
-  EventStream() {
-    stream = _controller.stream.asBroadcastStream();
-  }
-
-  signal([T value = null]) {
-    _controller.add(value);
-  }
-
-  /**
-   * Remove all callbacks
-   */
-  void close() {
-    _controller.close();
-  }
-}
-
-
 abstract class ChartWithAxes {
   num width;
   num height;
@@ -156,7 +132,7 @@ class ItemClickEvent {
 
 class ColumnChart extends ChartWithAxes {
   
-  final EventStream<ItemClickEvent> _onItemClick = new EventStream<ItemClickEvent>();
+  final StreamController<ItemClickEvent> _onItemClick = new StreamController<ItemClickEvent>.broadcast();
   Stream<ItemClickEvent> get onItemClick => _onItemClick.stream;
   
   Element $elmt;
@@ -361,7 +337,7 @@ class ColumnChart extends ChartWithAxes {
         rect.onClick.listen((MouseEvent evt) {
           var sel = selectElement(evt.target);
           Object datum = sel.datum;
-          _onItemClick.signal(new ItemClickEvent(evt, sel, datum));
+          _onItemClick.add(new ItemClickEvent(evt, sel, datum));
         });
       }
       
