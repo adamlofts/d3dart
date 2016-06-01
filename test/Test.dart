@@ -1,9 +1,8 @@
 
 import 'dart:html' as html;
 
-import 'package:unittest/unittest.dart';
-
-import '../lib/D3Dart.dart';
+import 'package:test/test.dart';
+import 'package:d3dart/D3Dart.dart';
 
 void main() {
   html.Element $test = html.querySelector("#test");

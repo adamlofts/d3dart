@@ -2,9 +2,9 @@ name: d3dart
 description: d3-like api with some built in charts
 dependencies:
   browser: ">=0.10.0+1 <0.11.0"
-  intl: "^0.12.4+2"
+  intl: any
 dev_dependencies:
-  unittest: any
+  test: any
 author: Adam Lofts <adam.lofts@gmail.com>
 homepage: https://github.com/adamlofts/d3dart
 version: 0.0.1
