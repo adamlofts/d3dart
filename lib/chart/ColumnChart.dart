@@ -138,6 +138,9 @@ class _ColumnPopover extends _Popover {
       xoff = (x(d['x']) + d['series_index'] * bar_width + margin['left'] - rect.width).floor();
       yoff = (y(d['value']) + margin['top'] - (rect.height / 2)).floor();
     }
+
+    // Never position outside the viewport
+    xoff = Math.max(0, xoff);
     
     $hover.style.left = "${xoff}px";
     $hover.style.top = "${yoff}px";
