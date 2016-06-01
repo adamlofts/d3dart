@@ -77,7 +77,7 @@ void main() {
       ..attrFunc("cx", (d, i) => x(d["sepalWidth"]))
       ..attrFunc("cy", (d, i) => y(d["sepalLength"]));
 
-    circle.style.fill = (d, i) => colorToHex(color(d["species"]));
+    circle.style.fill = (d, i) => d3.colorToHex(color(d["species"]));
   
     var legend = svg.selectAll(".legend")
         .data(color.domain)
@@ -91,7 +91,7 @@ void main() {
         ..attr("x", width - 18)
         ..attr("width", 18)
         ..attr("height", 18)
-        ..style.fill = (d, i) => colorToHex(color(d));
+        ..style.fill = (d, i) => d3.colorToHex(color(d));
   
     var lt = legend.append("text")
         ..attr("x", width - 24)

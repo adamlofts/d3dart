@@ -26,7 +26,7 @@ Future<List<Map>> csv(String url, { String separator: "," }) {
         String value = value_it.current;
         try {
           m[key] = double.parse(value);
-        } on FormatException catch (e) {
+        } on FormatException catch (_) {
           m[key] = value;
         }
       }

@@ -51,7 +51,7 @@ void main() {
       if ((d["children"] == null) || (d["children"].isEmpty)) {
         d = d["parent"];
       }
-      return colorToHex(color(d["name"]));
+      return d3.colorToHex(color(d["name"]));
     };
     path.style.fillRule = (d, i) => "evenodd";
 
