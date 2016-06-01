@@ -1,5 +1,5 @@
 name: d3dart
-description: A sample web application
+description: d3-like api with some built in charts
 dependencies:
   browser: ">=0.10.0+1 <0.11.0"
   intl: "^0.12.4+2"

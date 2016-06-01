@@ -30,5 +30,7 @@ var DATASET = [[{
 
 void main() {
   d3.ColumnChart chart = new d3.ColumnChart(querySelector("#chart"));
+  chart.has_legend = true;
+  chart.margin = {"top": 10, "bottom": 50, "left": 50, "right": 200};
   chart.data = DATASET;
 }

@@ -163,7 +163,8 @@ class ColumnChart extends ChartWithAxes {
   var color = Scale.category10;
   
   List _data;
-  
+  List _dataReversed;
+
   bool is_stacked = true;
   
   var popoverContentFunc;
@@ -257,7 +258,6 @@ class ColumnChart extends ChartWithAxes {
     }
     
     y.domain = y_extent;
-    
     // Below data
     renderXAxis(x, g);
     
@@ -334,7 +334,12 @@ class ColumnChart extends ChartWithAxes {
 
     // Ontop of data
     renderYAxis(y, g);
-    renderLegend($elmt, _data, color);
+
+    List legendData = _data;
+    if (is_stacked) {  // If stacked then legend should be reversed.
+      legendData = _dataReversed;
+    }
+    renderLegend($elmt, legendData, color);
 
     if (popoverContentFunc != null) {
       _ColumnPopover hover = new _ColumnPopover($elmt, width, height, margin, x, y, is_stacked, bar_width);
@@ -364,6 +369,9 @@ class ColumnChart extends ChartWithAxes {
   
   void set data(List value) {
     _data = value;
+    if (is_stacked) {
+      _dataReversed = new List.from(value.reversed);
+    }
     _render();
   }
 }
