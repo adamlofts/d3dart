@@ -31,6 +31,11 @@ var DATASET = [[{
 void main() {
   d3.ColumnChart chart = new d3.ColumnChart(querySelector("#chart"));
   chart.has_legend = true;
+  chart.popoverContentFunc = (d) {
+    DivElement div = new DivElement();
+    div.text = "$d";
+    return div;
+  };
   chart.margin = {"top": 10, "bottom": 50, "left": 50, "right": 200};
   chart.data = DATASET;
 }

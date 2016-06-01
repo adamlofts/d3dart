@@ -132,7 +132,8 @@ class _ColumnPopover extends _Popover {
     
     if (is_stacked) {
       xoff = (x(d['x']) + margin['left'] - rect.width).floor();
-      yoff = (y(d['stack_end']) + margin['top'] - (rect.height / 2)).floor();
+      // Position popover in middle of bar
+      yoff = (y(d['stack_end']) + (y(0) - y(d['value'])) / 2 + margin['top'] - (rect.height / 2)).floor();
     } else {
       xoff = (x(d['x']) + d['series_index'] * bar_width + margin['left'] - rect.width).floor();
       yoff = (y(d['value']) + margin['top'] - (rect.height / 2)).floor();
